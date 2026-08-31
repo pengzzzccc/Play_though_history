@@ -9,6 +9,7 @@
 /[Bb]uild/
 /[Bb]uilds/
 /[Ll]ogs/
+/Documentation/
 /[Uu]ser[Ss]ettings/
 *.log
 
@@ -33,7 +34,7 @@
 .mimocode/
 .workbuddy/
 .zcode/
-.
+
 
 
 # Gradle cache directory

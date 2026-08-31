@@ -6,7 +6,19 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/UnknownTechnology/Scenes/Bootstrap.unity
+    guid: e71fbacf8abb5c347b3c8c949011e144
+  - enabled: 1
+    path: Assets/UnknownTechnology/Scenes/MainMenu.unity
+    guid: e1772914b5cd6a24ca6c4fff29ff52c5
+  - enabled: 1
+    path: Assets/UnknownTechnology/Scenes/Era_Ancient.unity
+    guid: 2115f810d79b96a4fb1b6bb4605c8f5b
+  - enabled: 1
+    path: Assets/UnknownTechnology/Scenes/Era_Modern.unity
+    guid: 90572826e9ed12b46baddd0e68ecbe76
+  - enabled: 1
+    path: Assets/UnknownTechnology/Scenes/Era_Future.unity
+    guid: 75c1758fe4d87c544bf4beacf7d1bbef
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

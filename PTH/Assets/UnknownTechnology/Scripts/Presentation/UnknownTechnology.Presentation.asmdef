@@ -1,0 +1,20 @@
+{
+  "name": "UnknownTechnology.Presentation",
+  "rootNamespace": "UnknownTechnology",
+  "references": [
+    "UnknownTechnology.Core",
+    "UnknownTechnology.Gameplay",
+    "Unity.InputSystem",
+    "Unity.UGUI",
+    "Unity.TextMeshPro"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

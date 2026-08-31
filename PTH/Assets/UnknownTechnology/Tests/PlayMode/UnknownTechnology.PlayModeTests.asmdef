@@ -1,0 +1,22 @@
+{
+  "name": "UnknownTechnology.PlayModeTests",
+  "rootNamespace": "UnknownTechnology.Tests",
+  "references": [
+    "UnknownTechnology.Core",
+    "UnknownTechnology.Gameplay",
+    "UnknownTechnology.Bootstrap",
+    "UnknownTechnology.Presentation",
+    "Unity.InputSystem",
+    "Unity.InputSystem.TestFramework"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": ["TestAssemblies"]
+}
