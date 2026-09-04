@@ -1,46 +1,93 @@
 using System;
-using TMPro;
 using UnknownTechnology.Core.Events;
 using UnknownTechnology.Core.SceneFlow;
 using UnknownTechnology.Core.State;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace UnknownTechnology.Presentation
 {
+    [RequireComponent(typeof(UIDocument))]
     public sealed class MainMenuController : MonoBehaviour
     {
-        [SerializeField] private Button newGameButton;
-        [SerializeField] private Button continueButton;
-        [SerializeField] private Button quitButton;
-        [SerializeField] private TMP_Text statusText;
+        private const string StatusReady = "Investigate the missing technology relics.";
+        private const string StatusUnavailable = "Game services are unavailable.";
+        private const string StatusLoading = "Loading Ancient Exhibition...";
+        private const string ContinueDisabledLabel = "Continue (No save yet)";
+
+        private Button newGameButton;
+        private Button continueButton;
+        private Button quitButton;
+        private Label statusLabel;
 
         private GameContext context;
         private IDisposable rejectionSubscription;
+        private bool bound;
 
         private void Start()
         {
+            Bind();
+        }
+
+        private void OnDisable()
+        {
+            Unbind();
+        }
+
+        private void Bind()
+        {
+            if (bound)
+            {
+                return;
+            }
+
+            var root = GetComponent<UIDocument>().rootVisualElement;
+            if (root == null)
+            {
+                return;
+            }
+
+            newGameButton = root.Q<Button>("new-game-button");
+            continueButton = root.Q<Button>("continue-button");
+            quitButton = root.Q<Button>("quit-button");
+            statusLabel = root.Q<Label>("status-label");
+
             if (!GameContextProvider.IsReady)
             {
-                statusText.text = "Game services are unavailable.";
+                statusLabel.text = StatusUnavailable;
                 SetInteractable(false);
                 return;
             }
 
+            bound = true;
             context = GameContextProvider.Current;
-            newGameButton.onClick.AddListener(StartNewGame);
-            quitButton.onClick.AddListener(QuitGame);
-            continueButton.interactable = false;
-            continueButton.GetComponentInChildren<TMP_Text>().text = "Continue (No save yet)";
-            statusText.text = "Investigate the missing technology relics.";
+            newGameButton.clicked += StartNewGame;
+            quitButton.clicked += QuitGame;
+            continueButton.SetEnabled(false);
+            continueButton.text = ContinueDisabledLabel;
+            statusLabel.text = StatusReady;
             rejectionSubscription = context.EventBus.Subscribe<SceneLoadRejected>(ShowRejection);
-            newGameButton.Select();
+            newGameButton.Focus();
+        }
+
+        private void Unbind()
+        {
+            if (!bound)
+            {
+                return;
+            }
+
+            newGameButton.clicked -= StartNewGame;
+            quitButton.clicked -= QuitGame;
+            rejectionSubscription?.Dispose();
+            rejectionSubscription = null;
+            bound = false;
         }
 
         private void StartNewGame()
         {
             SetInteractable(false);
-            statusText.text = "Loading Ancient Exhibition...";
+            statusLabel.text = StatusLoading;
             if (!context.SceneFlow.RequestLoad(SceneFlowConfig.AncientRoute))
             {
                 SetInteractable(true);
@@ -58,29 +105,14 @@ namespace UnknownTechnology.Presentation
 
         private void ShowRejection(SceneLoadRejected rejection)
         {
-            statusText.text = rejection.Reason;
+            statusLabel.text = rejection.Reason;
             SetInteractable(true);
         }
 
         private void SetInteractable(bool value)
         {
-            newGameButton.interactable = value;
-            quitButton.interactable = value;
+            newGameButton.SetEnabled(value);
+            quitButton.SetEnabled(value);
         }
-
-        private void OnDestroy()
-        {
-            rejectionSubscription?.Dispose();
-        }
-
-#if UNITY_EDITOR
-        public void Configure(Button newGame, Button continueGame, Button quit, TMP_Text status)
-        {
-            newGameButton = newGame;
-            continueButton = continueGame;
-            quitButton = quit;
-            statusText = status;
-        }
-#endif
     }
 }

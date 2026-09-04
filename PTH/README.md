@@ -2,126 +2,126 @@
 
 ## 1. Project Overview
 
-**Unknown Technology** 是一款第一人称教育型博物馆沙盒解谜游戏。玩家扮演科技与创新展览的博物馆员工，调查九件失踪或损坏的文物，并使用一把可升级的权杖寻找线索、回收碎片和完成修复。每次修复都会补充历史事实、短篇闪回与技术时间线，最终连接古代、现代和未来三个时代。
+**Unknown Technology** is a first-person educational museum sandbox puzzle game. The player takes the role of a museum employee at an exhibition of science, technology, and innovation, investigating nine missing or damaged artifacts and using an upgradable Scepter to find clues, recover fragments, and complete restorations. Each restoration adds historical facts, a short flashback, and a technology timeline, ultimately connecting the three eras: Ancient, Modern, and Future.
 
-本仓库已经形成第一人称可玩基础切片：可从正式入口进入主菜单并加载古代展馆灰盒，使用键鼠或手柄移动、观察、暂停和调整基础设置。M01–M04 已按当前范围完成，M05 已完成支撑该切片的第一人称控制；文物交互、修复、历史内容和完整游戏循环仍待后续模块实现。
+The repository already contains a playable first-person foundation slice: the player can reach the main menu from the official entry point, load the Ancient gallery greybox, and move, look around, pause, and adjust basic settings with keyboard/mouse or gamepad. M01–M04 are complete within the current scope, and M05 delivered the first-person controls that support this slice; artifact interaction, restoration, historical content, and the full game loop remain for later modules.
 
 ## 2. High Concept
 
-玩家在一座舒适而神秘的科技博物馆中调查缺失文物，通过观察、逻辑推理和空间装配重建技术史。核心体验不是战斗，而是发现、理解和修复：玩家既是调查员，也是文物修复者和历史整理者。
+The player investigates missing artifacts in a cozy yet mysterious museum of technology, reconstructing the history of technology through observation, logical reasoning, and spatial assembly. The core experience is not combat but discovery, understanding, and restoration: the player is at once an investigator, an artifact restorer, and an archivist of history.
 
 ## 3. Core Experience
 
-游戏围绕四个体验支柱展开：
+The game is built around four experience pillars:
 
-- **调查与发现**：探索展馆、阅读环境线索、找到文物碎片与事实。
-- **逻辑与修复**：移动、旋转、匹配并吸附碎片，重建文物。
-- **历史联系**：理解文物解决了什么问题，以及它如何影响后续技术。
-- **展馆恢复**：空展柜、照明、声音和时间线随进度逐步恢复，提供清晰的成就反馈。
+- **Investigation & Discovery**: explore the galleries, read environmental clues, and find artifact fragments and facts.
+- **Logic & Restoration**: move, rotate, match, and snap fragments together to rebuild artifacts.
+- **Historical Connection**: understand what problem an artifact solved and how it influenced later technology.
+- **Gallery Recovery**: empty display cases, lighting, sound, and the timeline gradually recover with progress, providing clear feedback of achievement.
 
 ## 4. Target Audience
 
-- 对历史、科技或博物馆主题感兴趣的玩家。
-- 游戏经验有限、需要清晰引导和低操作负担的玩家。
-- 不设严格年龄范围；最终历史文本、题目难度和内容分级仍需由内容团队审核。
+- Players interested in history, technology, or museum themes.
+- Players with limited game experience who need clear guidance and low mechanical demands.
+- No strict age range; the final historical texts, question difficulty, and content rating still require review by the content team.
 
 ## 5. Target Platforms
 
-- 主要平台：Windows 64 位。
-- 发布平台：支持 WebGL 的网站或 itch.io 页面。
-- 输入：键盘鼠标与通用手柄均为首版验收范围。
-- 最低界面基线：960×600。
-- 不以触屏、XR 或本地多人为首版目标。
+- Primary platform: Windows 64-bit.
+- Distribution: a WebGL-capable website or itch.io page.
+- Input: keyboard/mouse and common gamepads are both within first-release acceptance scope.
+- Minimum UI baseline: 960×600.
+- Touch, XR, and local multiplayer are not first-release targets.
 
 ## 6. Core Features
 
-- 第一人称博物馆调查与环境交互。
-- 一把贯穿全程、可升级的文物修复权杖。
-- 古代、现代、未来三个时代展馆。
-- 九件独特文物，每个时代三件。
-- 碎片搜索、空间旋转、匹配和吸附修复。
-- 历史事实笔记、文物闪回与技术时间线。
-- 每个时代一组 3 题测验，通过后解锁时代权杖。
-- 条件线性 NPC 对话与渐进式提示。
-- 自动存档、`Continue`、键鼠与手柄提示，以及基础无障碍设置。
+- First-person museum investigation and environmental interaction.
+- A single upgradable artifact-restoration Scepter used throughout the game.
+- Three era galleries: Ancient, Modern, and Future.
+- Nine unique artifacts, three per era.
+- Fragment search, spatial rotation, matching, and snap assembly for restoration.
+- Historical fact notes, artifact flashbacks, and a technology timeline.
+- A 3-question quiz per era; passing it unlocks the era Scepter.
+- Conditional linear NPC dialogue with progressively delivered hints.
+- Auto-save, `Continue`, keyboard/mouse and gamepad prompts, and basic accessibility settings.
 
 ## 7. Scope and Constraints
 
-目标游戏时长约 20 分钟：序章约 2 分钟，三个时代各约 5 分钟，结尾约 3 分钟。首个可玩目标是 5–6 分钟的古代展馆垂直切片。
+The target playtime is about 20 minutes: roughly 2 minutes for the prologue, 5 minutes per era, and 3 minutes for the ending. The first playable target is a 5–6 minute Ancient gallery vertical slice.
 
-首版明确不包含：
+The first release explicitly excludes:
 
-- 战斗、生命值、死亡、时间限制或资源惩罚。
-- 蹲伏、冲刺、攀爬和复杂移动能力；仅保留基础落地跳跃。
-- NPC 选择树、支线任务或行为树。
-- 可自由操作的历史闪回关卡。
-- 触屏、XR、联网、云存档或多人功能。
-- 三把权杖各自独立的操作系统。
-- 未经来源登记和内容审核的历史事实。
+- Combat, health, death, time limits, or resource penalties.
+- Crouching, sprinting, climbing, and complex movement abilities; only a basic grounded jump remains.
+- NPC choice trees, side quests, or behavior trees.
+- Freely playable historical flashback levels.
+- Touch, XR, networking, cloud saves, or multiplayer features.
+- Independent operation mechanics for each of the three Scepters.
+- Historical facts that have not been registered to a source and passed content review.
 
 ## 8. Core Gameplay Loop
 
-单件文物循环：
+Single-artifact loop:
 
 ```text
-发现空展柜
-→ 调查附近线索
-→ 获得历史事实
-→ 找到2–4个碎片
-→ 前往修复台
-→ 移动、旋转和装配
-→ 文物恢复
-→ 观看可跳过闪回
-→ 写入历史笔记和时间线
+Discover an empty display case
+→ Investigate nearby clues
+→ Obtain a historical fact
+→ Find 2–4 fragments
+→ Go to the restoration bench
+→ Move, rotate, and assemble
+→ Artifact restored
+→ Watch a skippable flashback
+→ Record the historical note and timeline entry
 ```
 
-单时代循环：
+Single-era loop:
 
 ```text
-进入展馆
-→ NPC介绍时代主题
-→ 修复三件文物
-→ 查看时代时间线
-→ 完成三题测验（3/3）
-→ 解锁时代权杖
-→ 开放下一时代
+Enter the gallery
+→ NPC introduces the era theme
+→ Restore three artifacts
+→ View the era timeline
+→ Complete the 3-question quiz (3/3)
+→ Unlock the era Scepter
+→ Unlock the next era
 ```
 
-完整流程：
+Full flow:
 
 ```text
-主菜单 → 序章 → 古代 → 现代 → 未来 → 完整时间线 → 结局
+Main Menu → Prologue → Ancient → Modern → Future → Full Timeline → Ending
 ```
 
-详细规则见[核心玩法](Documentation/01_GameDesign/CoreGameplay.md)与[玩家流程](Documentation/01_GameDesign/PlayerFlow.md)。
+Detailed rules are in [Core Gameplay](Documentation/01_GameDesign/CoreGameplay.md) and [Player Flow](Documentation/01_GameDesign/PlayerFlow.md).
 
 ## 9. Current Repository Status
 
-以下状态基于 2026-08-31 的实现与验证结果。
+The following status reflects implementation and verification results as of 2026-08-31.
 
-| 项目 | 当前状态 |
+| Item | Current Status |
 |---|---|
-| Unity 版本 | `6000.4.10f1` |
-| 渲染 | URP `17.4.0` 已安装并配置 |
-| 输入 | Input System `1.19.0`；已建立正式 `Gameplay`、`Restoration`、`UI` Action Maps，以及键鼠与手柄控制方案 |
-| 导航 | AI Navigation `2.0.12` 已安装 |
-| UI | uGUI `2.0.0` 与 TMP；已有主菜单、暂停菜单和最小设置面板，完整 M11 尚未实现 |
-| 时间线 | Timeline `1.8.12` 已安装；尚无游戏闪回内容 |
-| 测试 | Unity Test Framework `1.6.0`；Edit Mode 33/33、Play Mode 3/3 通过 |
-| 正式场景 | `Bootstrap`、`MainMenu`、`Era_Ancient`、`Era_Modern`、`Era_Future` 已登记；Modern/Future 当前锁定 |
-| SampleScene | 文件保留，但已从正式 Build Settings 移除 |
-| 全局状态 | `GamePhase`、只读快照、显式转换守卫、暂停恢复和唯一 `GameContext` 已实现 |
-| EventBus | 非静态强类型总线、快照发布及 `IDisposable` 订阅已实现；旧字符串占位总线已移除 |
-| 玩家控制 | 第一人称 `CharacterController` 移动、落地跳跃、重力、碰撞、镜头、灰盒手部与权杖反馈已实现 |
-| 环境交互 | 未实现 |
-| 权杖与修复 | 未实现 |
-| NPC 与对话 | 未实现 |
-| UI 与无障碍 | 仅完成当前切片所需 UI 缩放、Y 轴反转、灵敏度和 Reduced Motion；完整 M11 未实现 |
-| 音频控制 | 未实现 |
-| 存档与进度 | 仅设置使用项目专属 PlayerPrefs 键持久化；M13 游戏进度存档未实现 |
-| 三时代内容 | Ancient 为可探索灰盒；Modern/Future 是锁定占位场景，M07 内容数据未实现 |
-| Windows 构建 | Development 构建成功，隐藏启动 8 秒无运行时错误 |
-| WebGL 构建 | Development 构建成功，`index.html` 与 WASM 经本地 HTTP 返回 200 |
+| Unity version | `6000.4.10f1` |
+| Rendering | URP `17.4.0` installed and configured |
+| Input | Input System `1.19.0`; official `Gameplay`, `Restoration`, and `UI` action maps established, with keyboard/mouse and gamepad control schemes |
+| Navigation | AI Navigation `2.0.12` installed |
+| UI | UI Toolkit (Unity 6 built-in UIDocument/UXML/USS); main menu, pause menu, and a minimal settings panel exist; full M11 not yet implemented. `com.unity.ugui` is kept only for the EventSystem mixed-input bridge |
+| Timeline | Timeline `1.8.12` installed; no in-game flashback content yet |
+| Tests | Unity Test Framework `1.6.0`; Edit Mode 33/33 and Play Mode 3/3 passing |
+| Official scenes | `Bootstrap`, `MainMenu`, `Era_Ancient`, `Era_Modern`, `Era_Future` registered; Modern/Future currently locked |
+| SampleScene | File kept, but removed from the official Build Settings |
+| Global state | `GamePhase`, read-only snapshots, explicit transition guards, pause/resume, and a single `GameContext` implemented |
+| EventBus | Non-static strongly-typed bus with snapshot publishing and `IDisposable` subscriptions implemented; the legacy string-keyed placeholder bus removed |
+| Player control | First-person `CharacterController` movement, grounded jump, gravity, collision, camera, greybox hands, and Scepter feedback implemented |
+| Environmental interaction | Not implemented |
+| Scepter & restoration | Not implemented |
+| NPC & dialogue | Not implemented |
+| UI & accessibility | UI migrated to UI Toolkit (UIDocument/UXML/USS; dev guidelines in [UiToolkit](Documentation/02_TechnicalDesign/UiToolkit.md)); UI scaling, Y-axis invert, sensitivity, and Reduced Motion completed for the current slice; full M11 not implemented |
+| Audio control | Not implemented |
+| Saves & progress | Only settings persist via project-specific PlayerPrefs keys; M13 game-progress saves not implemented |
+| Three-era content | Ancient is an explorable greybox; Modern/Future are locked placeholder scenes, M07 content data not implemented |
+| Windows build | Development build succeeds; an 8-second hidden launch run shows no runtime errors |
+| WebGL build | Development build succeeds; `index.html` and WASM return 200 over a local HTTP server |
 
 ```text
 Project Stage: Playable foundation / Vertical slice
@@ -131,26 +131,26 @@ Current Milestone: M01–M04 complete; M05 first-person slice complete
 
 ## 10. Module Completion Status
 
-状态统一使用 `Planned → In Progress → Review → Complete`。
+All modules use the unified statuses `Planned → In Progress → Review → Complete`.
 
-| 模块 | 状态 | 当前完成 | 下一步 |
+| Module | Status | Completed | Next Step |
 |---|---|---|---|
-| M01：启动与全局状态 | Complete | 状态快照、转换守卫、暂停恢复、唯一 Bootstrap/Context、时代场景开发回退 | 后续模块只通过公开状态接口接入 |
-| M02：事件总线 | Complete | 强类型发布订阅、可释放句柄、订阅快照、异常日志与测试清理 | 后续模块新增只读事件消息 |
-| M03：场景流程 | Complete | 五场景路由、异步单事务、门禁、出生点恢复、失败事件和最小菜单入口 | M09/M13 完成后替换门禁与 Continue 适配器 |
-| M04：输入与设置 | Complete | 三套 Action Maps、键鼠/手柄、设备事件、安全的帧末映射切换、灵敏度、反转、Reduced Motion、设置持久化 | M11/M12 接入完整 UI 与音量消费端 |
-| M05：玩家控制 | Complete | 当前切片所需移动、落地跳跃、碰撞、镜头、锁定和灰盒表现已完成 | 后续只增加交互挂点，不扩展战斗移动 |
-| M06：环境交互 | Planned | 无 | 设计统一聚焦和交互规则 |
-| M07：内容数据 | Planned | 无 | 设计时代、文物和事实数据 |
-| M08：权杖与文物修复 | Planned | 无 | 设计探测、碎片与装配会话 |
-| M09：进度与测验 | Planned | 无 | 设计门禁、测验和奖励状态 |
-| M10：NPC 与对话 | Planned | 无 | 设计条件线性对话与导航状态 |
-| M11：UI 与无障碍 | In Progress | 已有主菜单、暂停/设置面板、UI 缩放与 Reduced Motion 接口 | 完成全部面板、焦点导航、字幕和 960×600 验收 |
-| M12：音频与闪回 | Planned | 无 | 设计音频事件和闪回表现 |
-| M13：存档 | Planned | 无 | 设计进度与设置的存档边界 |
-| M14：验证与测试 | In Progress | M01–M05 自动测试、Windows/WebGL 构建和启动检查已建立 | 后续为 M06–M13 增加对应验证，不将当前覆盖误标为完整 M14 |
+| M01: Bootstrap & Global State | Complete | State snapshots, transition guards, pause/resume, single Bootstrap/Context, era-scene dev fallback | Later modules connect only through public state interfaces |
+| M02: Event Bus | Complete | Strongly-typed pub/sub, disposable handles, subscription snapshots, exception logging, and test cleanup | Later modules add read-only event messages |
+| M03: Scene Flow | Complete | Five-scene routing, async single-transaction loading, gates, spawn point recovery, failure events, and a minimal menu entry | Replace gates and the Continue adapter after M09/M13 complete |
+| M04: Input & Settings | Complete | Three action maps, keyboard/mouse and gamepad support, device events, safe end-of-frame map switching, sensitivity, invert, Reduced Motion, settings persistence | M11/M12 hook up the full UI and volume consumers |
+| M05: Player Control | Complete | Movement required for the current slice, grounded jump, collision, camera, locking, and greybox presentation completed | Later add only interaction mount points; no combat movement expansion |
+| M06: Environmental Interaction | Planned | None | Design unified focus and interaction rules |
+| M07: Content Data | Planned | None | Design era, artifact, and fact data |
+| M08: Scepter & Artifact Restoration | Planned | None | Design detection, fragment, and assembly sessions |
+| M09: Progress & Quiz | Planned | None | Design gate, quiz, and reward states |
+| M10: NPC & Dialogue | Planned | None | Design conditional linear dialogue and navigation states |
+| M11: UI & Accessibility | In Progress | UI migrated to UI Toolkit (UIDocument/UXML/USS): main menu, pause/settings panels, HUD, and the UI scaling and Reduced Motion interfaces are available | Complete all panels, focus navigation, subtitles, and 960×600 acceptance |
+| M12: Audio & Flashback | Planned | None | Design audio events and flashback presentation |
+| M13: Saves | Planned | None | Design save boundaries for progress and settings |
+| M14: Verification & Testing | In Progress | Automated tests for M01–M05 and Windows/WebGL build and startup checks established | Add matching verification for M06–M13 later; do not label current coverage as complete M14 |
 
-单个模块的状态记录格式：
+Per-module status records follow this format:
 
 ```text
 Module:
@@ -163,30 +163,30 @@ Next Step:
 
 ## 11. Planned Implementation Phases
 
-1. **已完成——可玩基础**：M01、M02、M03、M04，以及当前范围的 M05。
-2. **下一阶段——探索交互**：M06 和 M07，建立统一交互契约与文物数据。
-3. **核心闭环**：M08、M09，完成权杖、碎片修复、测验与门禁。
-4. **呈现与引导**：M10、M11、M12，补齐 NPC、完整无障碍 UI、音频和闪回。
-5. **进度与内容**：M13 正式存档，并配置三时代九件文物。
-6. **验证与发布**：完成 M14 全模块覆盖、性能验收和 itch.io 发布检查。
+1. **Done — playable foundation**: M01, M02, M03, M04, and M05 within the current scope.
+2. **Next — exploration interaction**: M06 and M07, establishing the unified interaction contract and artifact data.
+3. **Core loop**: M08 and M09, completing the Scepter, fragment restoration, quizzes, and gates.
+4. **Presentation & guidance**: M10, M11, M12, completing NPCs, full accessible UI, audio, and flashbacks.
+5. **Progress & content**: M13 official saves, and configuring the nine artifacts across the three eras.
+6. **Verification & release**: full M14 module coverage, performance acceptance, and itch.io release checks.
 
 ## 12. Documentation Index
 
-- [核心玩法设计](Documentation/01_GameDesign/CoreGameplay.md)
-- [技术架构总览](Documentation/02_TechnicalDesign/ArchitectureOverview.md)
-- [技术模块索引](Documentation/02_TechnicalDesign/Modules/README.md)
-- [内容总纲](Documentation/03_Content/ContentBible.md)
-- [测试策略](Documentation/05_QA/TestStrategy.md)
+- [Core Gameplay Design](Documentation/01_GameDesign/CoreGameplay.md)
+- [Technical Architecture Overview](Documentation/02_TechnicalDesign/ArchitectureOverview.md)
+- [Technical Module Index](Documentation/02_TechnicalDesign/Modules/README.md)
+- [Content Bible](Documentation/03_Content/ContentBible.md)
+- [Test Strategy](Documentation/05_QA/TestStrategy.md)
 
-文档中出现的 `TBD` 表示尚未取得可靠内容或尚未完成产品决策，后续不得以未经审核的事实替换。
+Any `TBD` appearing in the documentation means reliable content has not yet been secured or a product decision is still open; it must not later be replaced with unreviewed facts.
 
 ## 13. Build and Development Requirements
 
-- Unity Editor：`6000.4.10f1`。
-- 目标构建：Windows 64 位与 WebGL。
-- 主要包版本以 `Packages/manifest.json` 为准。
-- 场景、资源、代码与测试位于 `Assets/UnknownTechnology`；TMP 基础资源位于 `Assets/TextMesh Pro`。
-- 技术实现应遵守 Core → Gameplay → Presentation → Validation 与 Tests 的单向依赖。
-- Development 构建输出到被 Git 忽略的 `Builds/Development/Windows` 与 `Builds/Development/WebGL`。
-- 自动测试结果输出到 `Temp/TestResults`，不会进入正式资源目录。
-- 发布前必须通过[发布检查清单](Documentation/05_QA/ReleaseChecklist.md)。
+- Unity Editor: `6000.4.10f1`.
+- Target builds: Windows 64-bit and WebGL.
+- Primary package versions follow `Packages/manifest.json`.
+- Scenes, assets, code, and tests live under `Assets/UnknownTechnology`; UI Toolkit assets (UXML/USS/themes/PanelSettings) live under `Assets/UnknownTechnology/UI`.
+- Implementation must respect the one-way dependencies Core → Gameplay → Presentation → Validation, plus Tests.
+- Development builds output to the git-ignored `Builds/Development/Windows` and `Builds/Development/WebGL` folders.
+- Automated test results output to `Temp/TestResults` and never enter the official asset directories.
+- The [Release Checklist](Documentation/05_QA/ReleaseChecklist.md) must pass before release.

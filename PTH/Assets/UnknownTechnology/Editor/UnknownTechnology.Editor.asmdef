@@ -7,8 +7,7 @@
     "UnknownTechnology.Bootstrap",
     "UnknownTechnology.Presentation",
     "Unity.InputSystem",
-    "Unity.UGUI",
-    "Unity.TextMeshPro"
+    "Unity.UGUI"
   ],
   "includePlatforms": ["Editor"],
   "excludePlatforms": [],

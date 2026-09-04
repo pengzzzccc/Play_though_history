@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Main.uss" />
+    <ui:VisualElement name="main-menu-root" class="screen screen-background">
+        <ui:Label name="title" text="UNKNOWN TECHNOLOGY" class="menu-title" />
+        <ui:Label name="status-label" text="Investigate the missing technology relics." class="menu-status" />
+        <ui:VisualElement name="menu-buttons" class="menu-buttons">
+            <ui:Button name="new-game-button" text="New Game" class="menu-button" />
+            <ui:Button name="continue-button" text="Continue" class="menu-button" />
+            <ui:Button name="quit-button" text="Quit" class="menu-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

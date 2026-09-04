@@ -3,24 +3,20 @@ using UnknownTechnology.Core.Events;
 using UnknownTechnology.Core.Settings;
 using UnknownTechnology.Core.State;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace UnknownTechnology.Presentation
 {
-    [RequireComponent(typeof(CanvasScaler))]
+    [RequireComponent(typeof(UIDocument))]
     public sealed class UiScaleSettingsApplier : MonoBehaviour
     {
-        private CanvasScaler canvasScaler;
+        private PanelSettings panelSettings;
         private IDisposable settingsSubscription;
-
-        private void Awake()
-        {
-            canvasScaler = GetComponent<CanvasScaler>();
-        }
 
         private void Start()
         {
-            if (!GameContextProvider.IsReady)
+            panelSettings = GetComponent<UIDocument>().panelSettings;
+            if (panelSettings == null || !GameContextProvider.IsReady)
             {
                 return;
             }
@@ -32,7 +28,10 @@ namespace UnknownTechnology.Presentation
 
         private void Apply(GameSettingsSnapshot settings)
         {
-            canvasScaler.scaleFactor = settings.UiScale;
+            if (panelSettings != null)
+            {
+                panelSettings.scale = settings.UiScale;
+            }
         }
 
         private void OnDestroy()

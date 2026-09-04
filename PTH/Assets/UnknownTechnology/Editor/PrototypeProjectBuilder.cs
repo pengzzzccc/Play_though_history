@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TMPro;
 using UnknownTechnology.Bootstrap;
 using UnknownTechnology.Core.SceneFlow;
 using UnknownTechnology.Core.State;
@@ -16,7 +15,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace UnknownTechnology.Editor
 {
@@ -27,7 +26,11 @@ namespace UnknownTechnology.Editor
         private const string SceneConfigPath = Root + "/Data/SceneFlowConfig.asset";
         private const string PlayerPrefabPath = Root + "/Prefabs/Player.prefab";
         private const string BootstrapPrefabPath = Root + "/Prefabs/GameRoot.prefab";
-        private const string FontAssetPath = "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset";
+        private const string UiPath = Root + "/UI";
+        private const string ThemePath = UiPath + "/DefaultTheme.tss";
+        private const string PanelSettingsPath = UiPath + "/PanelSettings.asset";
+        private const string MainMenuUxmlPath = UiPath + "/MainMenu.uxml";
+        private const string EraUiUxmlPath = UiPath + "/EraUI.uxml";
         private const string FloorMaterialPath = Root + "/Materials/Floor.mat";
         private const string WallMaterialPath = Root + "/Materials/Wall.mat";
         private const string AccentMaterialPath = Root + "/Materials/Accent.mat";
@@ -48,15 +51,15 @@ namespace UnknownTechnology.Editor
             var inputAsset = CreateInputAsset();
             var sceneConfig = CreateSceneConfig();
             var materials = CreateMaterials();
-            var font = CreateFontAsset();
+            EnsurePanelSettings();
             CreatePlayerPrefab(materials.Accent);
             CreateBootstrapPrefab(inputAsset, sceneConfig);
 
             CreateBootstrapScene();
-            CreateMainMenuScene(font);
-            CreateEraScene(SceneFlowConfig.AncientRoute, "Era_Ancient", "ANCIENT EXHIBITION — PLAYABLE GREYBOX", font, materials, true);
-            CreateEraScene(SceneFlowConfig.ModernRoute, "Era_Modern", "MODERN EXHIBITION — LOCKED PLACEHOLDER", font, materials, false);
-            CreateEraScene(SceneFlowConfig.FutureRoute, "Era_Future", "FUTURE EXHIBITION — LOCKED PLACEHOLDER", font, materials, false);
+            CreateMainMenuScene();
+            CreateEraScene(SceneFlowConfig.AncientRoute, "Era_Ancient", "ANCIENT EXHIBITION — PLAYABLE GREYBOX", materials, true);
+            CreateEraScene(SceneFlowConfig.ModernRoute, "Era_Modern", "MODERN EXHIBITION — LOCKED PLACEHOLDER", materials, false);
+            CreateEraScene(SceneFlowConfig.FutureRoute, "Era_Future", "FUTURE EXHIBITION — LOCKED PLACEHOLDER", materials, false);
             ConfigureBuildSettings();
 
             AssetDatabase.SaveAssets();
@@ -106,7 +109,7 @@ namespace UnknownTechnology.Editor
 
         private static void EnsureFolders()
         {
-            var folders = new[] { "Input", "Data", "Prefabs", "Scenes", "Materials" };
+            var folders = new[] { "Input", "Data", "Prefabs", "Scenes", "Materials", "UI" };
             foreach (var folder in folders)
             {
                 var path = Root + "/" + folder;
@@ -247,15 +250,38 @@ namespace UnknownTechnology.Editor
             return material;
         }
 
-        private static TMP_FontAsset CreateFontAsset()
+        private static void EnsurePanelSettings()
         {
-            var fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontAssetPath);
-            if (fontAsset == null)
+            if (!File.Exists(Path.GetFullPath(ThemePath)))
             {
-                throw new InvalidOperationException("TextMesh Pro Essential Resources are required before building the prototype.");
+                throw new InvalidOperationException($"UI Toolkit theme is missing: {ThemePath}. Keep DefaultTheme.tss, Main.uss, MainMenu.uxml, and EraUI.uxml inside {UiPath}.");
             }
 
-            return fontAsset;
+            var theme = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(ThemePath);
+            if (theme == null)
+            {
+                throw new InvalidOperationException($"UI Toolkit theme could not be imported: {ThemePath}");
+            }
+
+            var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
+            if (panelSettings == null)
+            {
+                panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+                AssetDatabase.CreateAsset(panelSettings, PanelSettingsPath);
+                // Swap to the canonical loaded instance so scene references serialize reliably.
+                panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
+                if (panelSettings == null)
+                {
+                    throw new InvalidOperationException($"PanelSettings asset was created but could not be loaded: {PanelSettingsPath}");
+                }
+            }
+
+            panelSettings.themeStyleSheet = theme;
+            panelSettings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
+            panelSettings.referenceResolution = new Vector2Int(960, 600);
+            panelSettings.match = 0.5f;
+            EditorUtility.SetDirty(panelSettings);
+            AssetDatabase.SaveAssets();
         }
 
         private static void CreatePlayerPrefab(Material accent)
@@ -342,21 +368,13 @@ namespace UnknownTechnology.Editor
             EditorSceneManager.SaveScene(scene, ScenePaths[0]);
         }
 
-        private static void CreateMainMenuScene(TMP_FontAsset font)
+        private static void CreateMainMenuScene()
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             CreateMenuCamera();
-            var canvas = CreateCanvas("Main Menu Canvas");
-            var background = CreatePanel(canvas.transform, "Background", new Color(0.035f, 0.055f, 0.075f, 1f));
-            var title = CreateText(background.transform, "Title", "UNKNOWN TECHNOLOGY", font, 48, new Vector2(0f, 175f), new Vector2(820f, 80f));
-            title.alignment = TextAlignmentOptions.Center;
-            var status = CreateText(background.transform, "Status", "Investigate the missing technology relics.", font, 22, new Vector2(0f, 90f), new Vector2(800f, 70f));
-            status.alignment = TextAlignmentOptions.Center;
-            var newGame = CreateButton(background.transform, "New Game", font, new Vector2(0f, 10f));
-            var continueGame = CreateButton(background.transform, "Continue", font, new Vector2(0f, -55f));
-            var quit = CreateButton(background.transform, "Quit", font, new Vector2(0f, -120f));
-            var controller = background.AddComponent<MainMenuController>();
-            controller.Configure(newGame, continueGame, quit, status);
+            var uiDocument = CreateUiDocument("Main Menu UI", MainMenuUxmlPath);
+            uiDocument.AddComponent<UiScaleSettingsApplier>();
+            uiDocument.AddComponent<MainMenuController>();
             CreateEventSystem();
             EditorSceneManager.SaveScene(scene, ScenePaths[1]);
         }
@@ -365,7 +383,6 @@ namespace UnknownTechnology.Editor
             string routeId,
             string sceneName,
             string heading,
-            TMP_FontAsset font,
             MaterialSet materials,
             bool detailed)
         {
@@ -386,8 +403,11 @@ namespace UnknownTechnology.Editor
             var developmentBootstrap = contextObject.AddComponent<DevelopmentSceneBootstrapper>();
             developmentBootstrap.Configure(bootstrapPrefab);
 
-            CreateEraHud(heading, font);
-            CreatePauseUi(font);
+            var uiDocument = CreateUiDocument("Era UI", EraUiUxmlPath);
+            uiDocument.AddComponent<UiScaleSettingsApplier>();
+            var hudController = uiDocument.AddComponent<EraHudController>();
+            hudController.Configure(heading);
+            uiDocument.AddComponent<PauseMenuController>();
             CreateEventSystem();
             EditorSceneManager.SaveScene(scene, Root + "/Scenes/" + sceneName + ".unity");
         }
@@ -449,153 +469,27 @@ namespace UnknownTechnology.Editor
             cameraObject.AddComponent<AudioListener>();
         }
 
-        private static Canvas CreateCanvas(string name)
+        private static GameObject CreateUiDocument(string name, string uxmlPath)
         {
-            var canvasObject = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-            var canvas = canvasObject.GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            var scaler = canvasObject.GetComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(960f, 600f);
-            scaler.matchWidthOrHeight = 0.5f;
-            canvasObject.AddComponent<UiScaleSettingsApplier>();
-            return canvas;
-        }
-
-        private static GameObject CreatePanel(Transform parent, string name, Color color)
-        {
-            var panel = new GameObject(name, typeof(RectTransform), typeof(Image));
-            panel.transform.SetParent(parent, false);
-            var rect = panel.GetComponent<RectTransform>();
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-            panel.GetComponent<Image>().color = color;
-            return panel;
-        }
-
-        private static TMP_Text CreateText(Transform parent, string name, string content, TMP_FontAsset font, int fontSize, Vector2 position, Vector2 size)
-        {
-            var textObject = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
-            textObject.transform.SetParent(parent, false);
-            var rect = textObject.GetComponent<RectTransform>();
-            rect.sizeDelta = size;
-            rect.anchoredPosition = position;
-            var text = textObject.GetComponent<TextMeshProUGUI>();
-            text.font = font;
-            text.fontSize = fontSize;
-            text.color = Color.white;
-            text.text = content;
-            text.textWrappingMode = TextWrappingModes.Normal;
-            return text;
-        }
-
-        private static Button CreateButton(Transform parent, string label, TMP_FontAsset font, Vector2 position)
-        {
-            var buttonObject = new GameObject(label + " Button", typeof(RectTransform), typeof(Image), typeof(Button));
-            buttonObject.transform.SetParent(parent, false);
-            var rect = buttonObject.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(320f, 52f);
-            rect.anchoredPosition = position;
-            buttonObject.GetComponent<Image>().color = new Color(0.12f, 0.48f, 0.5f, 0.95f);
-            var text = CreateText(buttonObject.transform, "Label", label, font, 24, Vector2.zero, rect.sizeDelta);
-            text.alignment = TextAlignmentOptions.Center;
-            return buttonObject.GetComponent<Button>();
-        }
-
-        private static void CreateEraHud(string heading, TMP_FontAsset font)
-        {
-            var canvas = CreateCanvas("HUD Canvas");
-            var headingText = CreateText(canvas.transform, "Era Heading", heading, font, 20, new Vector2(0f, 266f), new Vector2(850f, 45f));
-            headingText.alignment = TextAlignmentOptions.Center;
-            var controls = CreateText(canvas.transform, "Controls", "WASD / Left Stick: Move   Mouse / Right Stick: Look   Esc / Start: Pause", font, 17, new Vector2(0f, -270f), new Vector2(900f, 36f));
-            controls.alignment = TextAlignmentOptions.Center;
-            var crosshair = CreateText(canvas.transform, "Crosshair", "+", font, 24, Vector2.zero, new Vector2(32f, 32f));
-            crosshair.alignment = TextAlignmentOptions.Center;
-        }
-
-        private static void CreatePauseUi(TMP_FontAsset font)
-        {
-            var canvas = CreateCanvas("Pause Canvas");
-            canvas.sortingOrder = 20;
-            var controllerObject = new GameObject("Pause Controller");
-            controllerObject.transform.SetParent(canvas.transform, false);
-
-            var pausePanel = CreatePanel(canvas.transform, "Pause Panel", new Color(0.02f, 0.03f, 0.04f, 0.9f));
-            var title = CreateText(pausePanel.transform, "Title", "PAUSED", font, 42, new Vector2(0f, 190f), new Vector2(500f, 70f));
-            title.alignment = TextAlignmentOptions.Center;
-            var resume = CreateButton(pausePanel.transform, "Resume", font, new Vector2(-180f, 85f));
-            var settings = CreateButton(pausePanel.transform, "Settings", font, new Vector2(-180f, 20f));
-            var deviceMessage = CreateText(pausePanel.transform, "Device Message", string.Empty, font, 18, new Vector2(0f, -230f), new Vector2(850f, 60f));
-            deviceMessage.alignment = TextAlignmentOptions.Center;
-
-            var settingsPanel = new GameObject("Settings Panel", typeof(RectTransform), typeof(Image));
-            settingsPanel.transform.SetParent(pausePanel.transform, false);
-            var settingsRect = settingsPanel.GetComponent<RectTransform>();
-            settingsRect.sizeDelta = new Vector2(430f, 400f);
-            settingsRect.anchoredPosition = new Vector2(210f, 0f);
-            settingsPanel.GetComponent<Image>().color = new Color(0.08f, 0.11f, 0.14f, 0.98f);
-
-            var resources = GetDefaultControlResources();
-            var mouse = CreateSlider(settingsPanel.transform, "Mouse Sensitivity", resources, font, 130f);
-            var gamepad = CreateSlider(settingsPanel.transform, "Gamepad Sensitivity", resources, font, 65f);
-            var uiScale = CreateSlider(settingsPanel.transform, "UI Scale", resources, font, 0f);
-            var invert = CreateToggle(settingsPanel.transform, "Invert Y", resources, font, -65f);
-            var reduced = CreateToggle(settingsPanel.transform, "Reduced Motion", resources, font, -115f);
-            var fullscreen = CreateToggle(settingsPanel.transform, "Fullscreen", resources, font, -165f);
-            var back = CreateButton(settingsPanel.transform, "Back", font, new Vector2(0f, -225f));
-
-            var controller = controllerObject.AddComponent<PauseMenuController>();
-            controller.Configure(pausePanel, settingsPanel, resume, settings, back, mouse, gamepad, uiScale, invert, reduced, fullscreen, deviceMessage);
-            settingsPanel.SetActive(false);
-            pausePanel.SetActive(false);
-        }
-
-        private static Slider CreateSlider(Transform parent, string label, DefaultControls.Resources resources, TMP_FontAsset font, float y)
-        {
-            var labelText = CreateText(parent, label + " Label", label, font, 17, new Vector2(-100f, y + 25f), new Vector2(210f, 30f));
-            labelText.alignment = TextAlignmentOptions.Left;
-            var control = DefaultControls.CreateSlider(resources);
-            control.name = label + " Slider";
-            control.transform.SetParent(parent, false);
-            var rect = control.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(360f, 24f);
-            rect.anchoredPosition = new Vector2(0f, y);
-            return control.GetComponent<Slider>();
-        }
-
-        private static Toggle CreateToggle(Transform parent, string label, DefaultControls.Resources resources, TMP_FontAsset font, float y)
-        {
-            var control = DefaultControls.CreateToggle(resources);
-            control.GetComponent<Toggle>().isOn = false;
-            control.name = label + " Toggle";
-            control.transform.SetParent(parent, false);
-            var rect = control.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(360f, 36f);
-            rect.anchoredPosition = new Vector2(0f, y);
-            var legacyText = control.GetComponentInChildren<Text>();
-            if (legacyText != null)
+            // Load both assets at the point of use: an earlier-loaded PanelSettings can be
+            // unloaded by NewScene/SaveScene (UnloadUnusedAssets) before it is assigned.
+            var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
+            if (panelSettings == null)
             {
-                UnityEngine.Object.DestroyImmediate(legacyText.gameObject);
+                throw new InvalidOperationException($"PanelSettings could not be loaded from {PanelSettingsPath}; the UI document would render nothing.");
             }
-            var labelText = CreateText(control.transform, "Label", label, font, 17, new Vector2(35f, 0f), new Vector2(270f, 32f));
-            labelText.alignment = TextAlignmentOptions.Left;
-            return control.GetComponent<Toggle>();
-        }
 
-        private static DefaultControls.Resources GetDefaultControlResources()
-        {
-            return new DefaultControls.Resources
+            var tree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
+            if (tree == null)
             {
-                standard = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd"),
-                background = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Background.psd"),
-                inputField = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/InputFieldBackground.psd"),
-                knob = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd"),
-                checkmark = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Checkmark.psd"),
-                dropdown = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/DropdownArrow.psd"),
-                mask = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UIMask.psd")
-            };
+                throw new InvalidOperationException($"UI Toolkit document is missing: {uxmlPath}. Keep DefaultTheme.tss, Main.uss, MainMenu.uxml, and EraUI.uxml inside {UiPath}.");
+            }
+
+            var uiObject = new GameObject(name);
+            var uiDocument = uiObject.AddComponent<UIDocument>();
+            uiDocument.panelSettings = panelSettings;
+            uiDocument.visualTreeAsset = tree;
+            return uiObject;
         }
 
         private static void CreateEventSystem()

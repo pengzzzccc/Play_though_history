@@ -3,10 +3,7 @@
   "rootNamespace": "UnknownTechnology",
   "references": [
     "UnknownTechnology.Core",
-    "UnknownTechnology.Gameplay",
-    "Unity.InputSystem",
-    "Unity.UGUI",
-    "Unity.TextMeshPro"
+    "UnknownTechnology.Gameplay"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
