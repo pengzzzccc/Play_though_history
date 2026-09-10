@@ -5,11 +5,12 @@ namespace UnknownTechnology
 {
     /// <summary>
     /// Player-facing settings as a plain mutable class. Change fields, then call Save();
-    /// values are clamped, persisted to PlayerPrefs, applied to the engine and broadcast.
+    /// values are clamped, written to Data/settings.json, applied to the engine and
+    /// broadcast. Hand-edited values are clamped back into range on load.
     /// </summary>
     public class GameSettings
     {
-        public const string StorageKey = "unknowntechnology.settings.v2";
+        public const int SchemaVersion = 2;
         public const float MinimumMouseSensitivity = 0.02f;
         public const float MaximumMouseSensitivity = 1f;
         public const float MinimumGamepadSensitivity = 30f;
@@ -17,7 +18,7 @@ namespace UnknownTechnology
         public const float MinimumUiScale = 1f;
         public const float MaximumUiScale = 1.5f;
 
-        public int version = 2;
+        public int version = SchemaVersion;
         public float mouseSensitivity = 0.12f;
         public float gamepadSensitivity = 150f;
         public bool invertY;
@@ -38,20 +39,19 @@ namespace UnknownTechnology
         public void Save()
         {
             Sanitize();
-            PlayerPrefs.SetString(StorageKey, JsonUtility.ToJson(this));
-            PlayerPrefs.Save();
+            GameData.TryWriteText(GameData.SettingsPath, JsonUtility.ToJson(this, true));
             ApplyToEngine();
             Changed?.Invoke(this);
         }
 
         public static GameSettings Load()
         {
-            if (PlayerPrefs.HasKey(StorageKey))
+            if (GameData.TryReadText(GameData.SettingsPath, out var json))
             {
                 try
                 {
-                    var loaded = JsonUtility.FromJson<GameSettings>(PlayerPrefs.GetString(StorageKey));
-                    if (loaded != null && loaded.version == 2)
+                    var loaded = JsonUtility.FromJson<GameSettings>(json);
+                    if (loaded != null && loaded.version == SchemaVersion)
                     {
                         loaded.Sanitize();
                         loaded.ApplyToEngine();
@@ -60,16 +60,15 @@ namespace UnknownTechnology
                 }
                 catch (Exception exception)
                 {
-                    Debug.LogWarning($"Settings could not be loaded: {exception.Message}");
+                    Debug.LogWarning($"Settings file could not be parsed: {exception.Message}");
                 }
             }
 
-            var settings = new GameSettings
+            return new GameSettings
             {
                 qualityLevel = QualitySettings.GetQualityLevel(),
                 fullscreen = Screen.fullScreen
             };
-            return settings;
         }
 
         private void Sanitize()

@@ -147,6 +147,11 @@ namespace UnknownTechnology
             var uiDocument = CreateUiDocument("Main Menu UI", MainMenuUxmlPath);
             uiDocument.AddComponent<UiScaleSettingsApplier>();
             uiDocument.AddComponent<MainMenuController>();
+
+            // Spawn the game root when this scene is played directly in the editor.
+            var devSetup = new GameObject("DevSceneSetup").AddComponent<DevSceneSetup>();
+            devSetup.Configure(LoadRequired<GameBootstrap>(BootstrapPrefabPath));
+
             CreateEventSystem();
             EditorSceneManager.SaveScene(scene, ScenePaths[1]);
         }

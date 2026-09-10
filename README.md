@@ -15,7 +15,7 @@ in place, while content and the restoration gameplay are still ahead.
   ±80° pitch clamp, head-bob presentation that respects Reduced Motion.
 - Pause menu with a live settings panel: mouse/gamepad sensitivity, Y-axis
   inversion, UI scale (100%–150%), reduced motion and fullscreen. All settings
-  persist to PlayerPrefs and survive restarts.
+  persist to a local `Data/settings.json` file and survive restarts.
 - Full keyboard & mouse + gamepad support with automatic control-scheme
   switching; losing a gamepad auto-pauses the game and shows a reconnect notice.
 - UI Toolkit front-end (UXML/USS, shared PanelSettings at a 960×600 baseline)
