@@ -13,11 +13,6 @@ namespace UnknownTechnology
     {
         public static GameBootstrap Instance { get; private set; }
 
-        public static event Action CancelPressed;
-        public static event Action JumpPressed;
-        public static event Action<string> DeviceLost;
-        public static event Action<string> DeviceRegained;
-
         private PlayerInput playerInput;
         private InputAction moveAction;
         private InputAction lookAction;
@@ -48,15 +43,15 @@ namespace UnknownTechnology
             moveAction = playerInput.actions.FindAction("Gameplay/Move", true);
             lookAction = playerInput.actions.FindAction("Gameplay/Look", true);
             toolAction = playerInput.actions.FindAction("Gameplay/Tool", true);
-            Bind("Gameplay/Pause", Game.TryPause);
-            Bind("Restoration/Pause", Game.TryPause);
-            Bind("Gameplay/Jump", () => JumpPressed?.Invoke());
-            Bind("Restoration/Cancel", () => CancelPressed?.Invoke());
-            Bind("UI/Cancel", () => CancelPressed?.Invoke());
+            Bind("Gameplay/Pause", () => Game.TryPause());
+            Bind("Restoration/Pause", () => Game.TryPause());
+            Bind("Gameplay/Jump", GameEvents.RaiseJumpPressed);
+            Bind("Restoration/Cancel", GameEvents.RaiseCancelPressed);
+            Bind("UI/Cancel", GameEvents.RaiseCancelPressed);
             playerInput.onDeviceLost += HandleDeviceLost;
             playerInput.onDeviceRegained += HandleDeviceRegained;
 
-            Game.PhaseChanged += QueuePhase;
+            GameEvents.PhaseChanged += QueuePhase;
             EnterActiveScene(SceneManager.GetActiveScene().name);
         }
 
@@ -115,8 +110,7 @@ namespace UnknownTechnology
             var mapName = phase switch
             {
                 GamePhase.Exploring => "Gameplay",
-                GamePhase.Restoration => "Restoration",
-                GamePhase.MainMenu or GamePhase.Dialogue or GamePhase.Quiz or GamePhase.Paused or GamePhase.Completed => "UI",
+                GamePhase.MainMenu or GamePhase.Paused => "UI",
                 _ => string.Empty
             };
 
@@ -134,14 +128,14 @@ namespace UnknownTechnology
         private void HandleDeviceLost(PlayerInput input)
         {
             var displayName = input.devices.Count > 0 ? input.devices[0].displayName : "Input device";
-            DeviceLost?.Invoke(displayName);
+            GameEvents.RaiseDeviceLost(displayName);
             Game.TryPause();
         }
 
         private void HandleDeviceRegained(PlayerInput input)
         {
             var displayName = input.devices.Count > 0 ? input.devices[0].displayName : "Input device";
-            DeviceRegained?.Invoke(displayName);
+            GameEvents.RaiseDeviceRegained(displayName);
         }
 
         private void OnDestroy()
@@ -152,7 +146,7 @@ namespace UnknownTechnology
             }
 
             Instance = null;
-            Game.PhaseChanged -= QueuePhase;
+            GameEvents.PhaseChanged -= QueuePhase;
             if (playerInput != null)
             {
                 playerInput.onDeviceLost -= HandleDeviceLost;
@@ -164,10 +158,6 @@ namespace UnknownTechnology
         private static void ResetStatics()
         {
             Instance = null;
-            CancelPressed = null;
-            JumpPressed = null;
-            DeviceLost = null;
-            DeviceRegained = null;
         }
     }
 

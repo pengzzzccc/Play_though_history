@@ -71,7 +71,7 @@ namespace UnknownTechnology
             fullscreen.EnableInClassList(HiddenClass, !GameSettings.SupportsDisplaySettings);
             RefreshControls(Game.Settings);
 
-            resumeButton.clicked += Game.TryResume;
+            resumeButton.clicked += ResumeGame;
             settingsButton.clicked += OpenSettings;
             settingsBackButton.clicked += CloseSettings;
             mouseSensitivity.RegisterValueChangedCallback(OnControlChanged);
@@ -80,9 +80,9 @@ namespace UnknownTechnology
             invertY.RegisterValueChangedCallback(OnToggleChanged);
             reducedMotion.RegisterValueChangedCallback(OnToggleChanged);
             fullscreen.RegisterValueChangedCallback(OnToggleChanged);
-            Game.PhaseChanged += ApplyPhase;
-            GameBootstrap.DeviceLost += ShowDeviceLost;
-            GameBootstrap.DeviceRegained += ShowDeviceRegained;
+            GameEvents.PhaseChanged += ApplyPhase;
+            GameEvents.DeviceLost += ShowDeviceLost;
+            GameEvents.DeviceRegained += ShowDeviceRegained;
             ApplyPhase(Game.Phase);
         }
 
@@ -93,7 +93,7 @@ namespace UnknownTechnology
                 return;
             }
 
-            resumeButton.clicked -= Game.TryResume;
+            resumeButton.clicked -= ResumeGame;
             settingsButton.clicked -= OpenSettings;
             settingsBackButton.clicked -= CloseSettings;
             mouseSensitivity.UnregisterValueChangedCallback(OnControlChanged);
@@ -102,9 +102,9 @@ namespace UnknownTechnology
             invertY.UnregisterValueChangedCallback(OnToggleChanged);
             reducedMotion.UnregisterValueChangedCallback(OnToggleChanged);
             fullscreen.UnregisterValueChangedCallback(OnToggleChanged);
-            Game.PhaseChanged -= ApplyPhase;
-            GameBootstrap.DeviceLost -= ShowDeviceLost;
-            GameBootstrap.DeviceRegained -= ShowDeviceRegained;
+            GameEvents.PhaseChanged -= ApplyPhase;
+            GameEvents.DeviceLost -= ShowDeviceLost;
+            GameEvents.DeviceRegained -= ShowDeviceRegained;
             bound = false;
         }
 
@@ -152,6 +152,11 @@ namespace UnknownTechnology
             {
                 pauseOverlay.schedule.Execute(() => resumeButton.Focus());
             }
+        }
+
+        private void ResumeGame()
+        {
+            Game.TryResume();
         }
 
         private void OpenSettings()

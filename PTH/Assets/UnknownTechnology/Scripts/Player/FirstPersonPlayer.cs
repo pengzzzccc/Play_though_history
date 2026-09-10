@@ -25,9 +25,9 @@ namespace UnknownTechnology
             }
 
             PlaceAtSpawn();
-            Game.PhaseChanged += ApplyCursor;
-            GameBootstrap.CancelPressed += HandleCancel;
-            GameBootstrap.JumpPressed += HandleJump;
+            GameEvents.PhaseChanged += ApplyCursor;
+            GameEvents.CancelPressed += HandleCancel;
+            GameEvents.JumpPressed += HandleJump;
             ApplyCursor(Game.Phase);
         }
 
@@ -94,9 +94,9 @@ namespace UnknownTechnology
 
         private void OnDestroy()
         {
-            Game.PhaseChanged -= ApplyCursor;
-            GameBootstrap.CancelPressed -= HandleCancel;
-            GameBootstrap.JumpPressed -= HandleJump;
+            GameEvents.PhaseChanged -= ApplyCursor;
+            GameEvents.CancelPressed -= HandleCancel;
+            GameEvents.JumpPressed -= HandleJump;
         }
 
 #if UNITY_EDITOR

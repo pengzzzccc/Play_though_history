@@ -10,12 +10,7 @@ namespace UnknownTechnology
         MainMenu = 1,
         Loading = 2,
         Exploring = 3,
-        Dialogue = 4,
-        Restoration = 5,
-        Quiz = 6,
-        Paused = 7,
-        Completed = 8,
-        FatalError = 9
+        Paused = 4
     }
 
     public enum ControlScheme
@@ -37,8 +32,6 @@ namespace UnknownTechnology
         public static GamePhase Phase { get; private set; } = GamePhase.Boot;
         public static GamePhase ResumePhase { get; private set; }
         public static bool IsLoading { get; private set; }
-
-        public static event Action<GamePhase> PhaseChanged;
 
         public static bool SetPhase(GamePhase target)
         {
@@ -141,41 +134,28 @@ namespace UnknownTechnology
             Phase = GamePhase.Boot;
             ResumePhase = GamePhase.Boot;
             IsLoading = false;
-            PhaseChanged = null;
             settings = null;
         }
 
         private static void Commit(GamePhase target)
         {
             Phase = target;
-            PhaseChanged?.Invoke(target);
+            GameEvents.RaisePhaseChanged(target);
         }
 
         private static bool IsPausable(GamePhase phase)
         {
-            return phase == GamePhase.Exploring || phase == GamePhase.Dialogue ||
-                   phase == GamePhase.Restoration || phase == GamePhase.Quiz;
+            return phase == GamePhase.Exploring;
         }
 
         private static bool CanTransition(GamePhase source, GamePhase target)
         {
-            if (target == GamePhase.FatalError)
-            {
-                return source != GamePhase.FatalError;
-            }
-
             return source switch
             {
                 GamePhase.Boot => target == GamePhase.Loading || target == GamePhase.MainMenu || target == GamePhase.Exploring,
                 GamePhase.MainMenu => target == GamePhase.Loading,
-                GamePhase.Loading => target == GamePhase.MainMenu || target == GamePhase.Exploring || target == GamePhase.Completed,
-                GamePhase.Exploring => target == GamePhase.Dialogue || target == GamePhase.Restoration ||
-                                       target == GamePhase.Quiz || target == GamePhase.Loading || target == GamePhase.Completed,
-                GamePhase.Dialogue => target == GamePhase.Exploring,
-                GamePhase.Restoration => target == GamePhase.Exploring,
-                GamePhase.Quiz => target == GamePhase.Exploring || target == GamePhase.Loading || target == GamePhase.Completed,
-                GamePhase.Completed => target == GamePhase.Loading || target == GamePhase.MainMenu,
-                GamePhase.FatalError => target == GamePhase.Loading || target == GamePhase.MainMenu,
+                GamePhase.Loading => target == GamePhase.MainMenu || target == GamePhase.Exploring,
+                GamePhase.Exploring => target == GamePhase.Loading,
                 _ => false
             };
         }
