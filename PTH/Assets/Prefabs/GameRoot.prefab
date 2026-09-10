@@ -10,9 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4404350812587757292}
   - component: {fileID: 3562683511138080547}
-  - component: {fileID: 5688698598075678304}
-  - component: {fileID: 2078354313856823114}
-  - component: {fileID: 9111329181445628685}
+  - component: {fileID: 6067086428214095343}
   m_Layer: 0
   m_Name: GameRoot
   m_TagString: Untagged
@@ -65,7 +63,7 @@ MonoBehaviour:
   m_DefaultActionMap: 
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &5688698598075678304
+--- !u!114 &6067086428214095343
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -74,33 +72,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8550823747684732644}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 633afb0ee18ba134f96692bf6421f366, type: 3}
+  m_Script: {fileID: 11500000, guid: da95a32d9dbc7ef43b384354c450529b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnknownTechnology.Gameplay::UnknownTechnology.Gameplay.Input.InputRouter
---- !u!114 &2078354313856823114
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8550823747684732644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e7746219bf0a0f40b2ec019c184567f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnknownTechnology.Core::UnknownTechnology.Core.SceneFlow.SceneFlowController
-  config: {fileID: 11400000, guid: 633e3e3a41adf9b498763713d910b4fb, type: 2}
---- !u!114 &9111329181445628685
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8550823747684732644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d047652b53963e49a89445d09578a72, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnknownTechnology.Bootstrap::UnknownTechnology.Bootstrap.GameBootstrap
-  inputRouter: {fileID: 5688698598075678304}
-  sceneFlowController: {fileID: 2078354313856823114}
+  m_EditorClassIdentifier: Assembly-CSharp::UnknownTechnology.GameBootstrap
