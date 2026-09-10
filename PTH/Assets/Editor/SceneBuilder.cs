@@ -18,7 +18,7 @@ namespace UnknownTechnology
     /// </summary>
     public static class SceneBuilder
     {
-        private const string Root = "Assets/UnknownTechnology";
+        private const string Root = "Assets";
         private const string InputAssetPath = Root + "/Input/UnknownTechnologyActions.asset";
         private const string PlayerPrefabPath = Root + "/Prefabs/Player.prefab";
         private const string BootstrapPrefabPath = Root + "/Prefabs/GameRoot.prefab";
