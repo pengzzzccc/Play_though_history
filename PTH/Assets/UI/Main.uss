@@ -1,0 +1,193 @@
+/* Shared design tokens and styles for all UI Toolkit screens.
+   Reference layout baseline: 960x600 (PanelSettings ScaleWithScreenSize, match 0.5). */
+
+:root {
+    --color-menu-bg: rgb(9, 14, 19);
+    --color-button: rgba(31, 122, 128, 0.95);
+    --color-button-hover: rgb(44, 146, 153);
+    --color-pause-overlay: rgba(5, 8, 10, 0.9);
+    --color-settings-panel: rgba(20, 28, 36, 0.98);
+    --color-text: rgb(235, 240, 242);
+    --color-focus: rgb(240, 245, 247);
+    --size-button-width: 320px;
+    --size-button-height: 52px;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ---- Main menu ---- */
+
+.screen-background {
+    background-color: var(--color-menu-bg);
+    align-items: center;
+}
+
+.menu-title {
+    margin-top: 85px;
+    margin-bottom: 10px;
+    width: 820px;
+    height: 80px;
+    font-size: 48px;
+    color: var(--color-text);
+    -unity-text-align: middle-center;
+}
+
+.menu-status {
+    margin-bottom: 91px;
+    width: 800px;
+    height: 70px;
+    font-size: 22px;
+    color: var(--color-text);
+    -unity-text-align: middle-center;
+}
+
+.menu-buttons {
+    align-items: center;
+}
+
+.menu-button {
+    width: var(--size-button-width);
+    height: var(--size-button-height);
+    margin-bottom: 13px;
+    font-size: 24px;
+    color: var(--color-text);
+    background-color: var(--color-button);
+    border-width: 2px;
+    border-color: rgba(0, 0, 0, 0);
+    border-radius: 4px;
+    -unity-text-align: middle-center;
+}
+
+.menu-button:hover {
+    background-color: var(--color-button-hover);
+}
+
+.menu-button:focus {
+    border-color: var(--color-focus);
+}
+
+.menu-button:disabled {
+    opacity: 0.45;
+}
+
+/* ---- Era HUD ---- */
+
+.hud-heading {
+    position: absolute;
+    top: 11px;
+    left: 55px;
+    right: 55px;
+    height: 45px;
+    font-size: 20px;
+    color: var(--color-text);
+    -unity-text-align: middle-center;
+}
+
+.hud-controls {
+    position: absolute;
+    bottom: 12px;
+    left: 30px;
+    right: 30px;
+    height: 36px;
+    font-size: 17px;
+    color: var(--color-text);
+    -unity-text-align: middle-center;
+}
+
+.hud-crosshair {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    font-size: 24px;
+    color: var(--color-text);
+    -unity-text-align: middle-center;
+}
+
+/* ---- Pause overlay ---- */
+
+.overlay {
+    background-color: var(--color-pause-overlay);
+}
+
+.pause-title {
+    position: absolute;
+    top: 75px;
+    left: 0;
+    right: 0;
+    height: 70px;
+    font-size: 42px;
+    color: var(--color-text);
+    -unity-text-align: middle-center;
+}
+
+.pause-buttons {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -340px;
+    margin-top: 59px;
+}
+
+.device-message {
+    position: absolute;
+    bottom: 40px;
+    left: 55px;
+    right: 55px;
+    height: 60px;
+    font-size: 18px;
+    color: var(--color-text);
+    -unity-text-align: middle-center;
+}
+
+/* ---- Settings panel ---- */
+
+.settings-panel {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    margin-left: -5px;
+    width: 430px;
+    min-height: 400px;
+    padding: 20px 24px;
+    background-color: var(--color-settings-panel);
+}
+
+.setting-row {
+    margin-bottom: 10px;
+}
+
+.setting-label {
+    margin-bottom: 4px;
+    font-size: 17px;
+    color: var(--color-text);
+}
+
+.setting-slider {
+    width: 100%;
+}
+
+.setting-toggle {
+    width: 100%;
+    height: 36px;
+    margin-bottom: 10px;
+    font-size: 17px;
+    color: var(--color-text);
+}
+
+.back-button {
+    align-self: center;
+    margin-top: 8px;
+    margin-bottom: 0;
+}

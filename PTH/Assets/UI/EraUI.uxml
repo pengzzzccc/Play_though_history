@@ -1,0 +1,35 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Main.uss" />
+    <!-- HUD renders first; the pause overlay is declared after it so it stacks on top. -->
+    <ui:VisualElement name="hud" class="screen">
+        <ui:Label name="era-heading" class="hud-heading" />
+        <ui:Label name="controls-hint" text="WASD / Left Stick: Move   Mouse / Right Stick: Look   Esc / Start: Pause" class="hud-controls" />
+        <ui:Label name="crosshair" text="+" class="hud-crosshair" />
+    </ui:VisualElement>
+    <ui:VisualElement name="pause-overlay" class="screen overlay hidden">
+        <ui:Label name="pause-title" text="PAUSED" class="pause-title" />
+        <ui:VisualElement name="pause-buttons" class="pause-buttons">
+            <ui:Button name="resume-button" text="Resume" class="menu-button" />
+            <ui:Button name="settings-button" text="Settings" class="menu-button" />
+        </ui:VisualElement>
+        <ui:Label name="device-message" class="device-message" />
+        <ui:VisualElement name="settings-panel" class="settings-panel hidden">
+            <ui:VisualElement name="mouse-sensitivity-row" class="setting-row">
+                <ui:Label text="Mouse Sensitivity" class="setting-label" />
+                <ui:Slider name="mouse-sensitivity" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:VisualElement name="gamepad-sensitivity-row" class="setting-row">
+                <ui:Label text="Gamepad Sensitivity" class="setting-label" />
+                <ui:Slider name="gamepad-sensitivity" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ui-scale-row" class="setting-row">
+                <ui:Label text="UI Scale" class="setting-label" />
+                <ui:Slider name="ui-scale" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:Toggle name="invert-y-toggle" label="Invert Y" class="setting-toggle" />
+            <ui:Toggle name="reduced-motion-toggle" label="Reduced Motion" class="setting-toggle" />
+            <ui:Toggle name="fullscreen-toggle" label="Fullscreen" class="setting-toggle" />
+            <ui:Button name="settings-back-button" text="Back" class="menu-button back-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

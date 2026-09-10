@@ -6,19 +6,19 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/UnknownTechnology/Scenes/Bootstrap.unity
-    guid: e71fbacf8abb5c347b3c8c949011e144
+    path: Assets/Scenes/Bootstrap.unity
+    guid: a907878e1c7715c419f7f2e4b999eee3
   - enabled: 1
-    path: Assets/UnknownTechnology/Scenes/MainMenu.unity
-    guid: e1772914b5cd6a24ca6c4fff29ff52c5
+    path: Assets/Scenes/MainMenu.unity
+    guid: 185c3afe694bc694a931addc6afdd712
   - enabled: 1
-    path: Assets/UnknownTechnology/Scenes/Era_Ancient.unity
-    guid: 2115f810d79b96a4fb1b6bb4605c8f5b
+    path: Assets/Scenes/Era_Ancient.unity
+    guid: 50b95089c12afd149b49edf67b9c2c2a
   - enabled: 1
-    path: Assets/UnknownTechnology/Scenes/Era_Modern.unity
-    guid: 90572826e9ed12b46baddd0e68ecbe76
+    path: Assets/Scenes/Era_Modern.unity
+    guid: 54640da334865dc4e9d54bae22ffbfdc
   - enabled: 1
-    path: Assets/UnknownTechnology/Scenes/Era_Future.unity
-    guid: 75c1758fe4d87c544bf4beacf7d1bbef
+    path: Assets/Scenes/Era_Future.unity
+    guid: f7a4319b044071942b1d465c10f9928a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
