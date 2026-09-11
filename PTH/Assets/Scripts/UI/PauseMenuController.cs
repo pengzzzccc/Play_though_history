@@ -3,23 +3,22 @@ using UnityEngine.UIElements;
 
 namespace UnknownTechnology
 {
+    /// <summary>
+    /// Drives the pause overlay of era scenes: resume, settings (shared template
+    /// panel) and save &amp; quit. Also owns the Esc semantics while paused —
+    /// close the settings page first, only then resume the game.
+    /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class PauseMenuController : MonoBehaviour
     {
         private const string HiddenClass = "hidden";
 
         private VisualElement pauseOverlay;
-        private VisualElement settingsPanel;
         private Button resumeButton;
         private Button settingsButton;
-        private Button settingsBackButton;
-        private Slider mouseSensitivity;
-        private Slider gamepadSensitivity;
-        private Slider uiScale;
-        private Toggle invertY;
-        private Toggle reducedMotion;
-        private Toggle fullscreen;
+        private Button saveQuitButton;
         private Label deviceMessage;
+        private SettingsPanelBinder settingsBinder;
         private bool bound;
 
         private void Start()
@@ -46,41 +45,21 @@ namespace UnknownTechnology
             }
 
             pauseOverlay = root.Q<VisualElement>("pause-overlay");
-            settingsPanel = root.Q<VisualElement>("settings-panel");
             resumeButton = root.Q<Button>("resume-button");
             settingsButton = root.Q<Button>("settings-button");
-            settingsBackButton = root.Q<Button>("settings-back-button");
-            mouseSensitivity = root.Q<Slider>("mouse-sensitivity");
-            gamepadSensitivity = root.Q<Slider>("gamepad-sensitivity");
-            uiScale = root.Q<Slider>("ui-scale");
-            invertY = root.Q<Toggle>("invert-y-toggle");
-            reducedMotion = root.Q<Toggle>("reduced-motion-toggle");
-            fullscreen = root.Q<Toggle>("fullscreen-toggle");
+            saveQuitButton = root.Q<Button>("save-quit-button");
             deviceMessage = root.Q<Label>("device-message");
+            settingsBinder = new SettingsPanelBinder(root);
+            settingsBinder.BackRequested += CloseSettings;
 
             pauseOverlay.AddToClassList(HiddenClass);
-            settingsPanel.AddToClassList(HiddenClass);
             bound = true;
 
-            mouseSensitivity.lowValue = GameSettings.MinimumMouseSensitivity;
-            mouseSensitivity.highValue = GameSettings.MaximumMouseSensitivity;
-            gamepadSensitivity.lowValue = GameSettings.MinimumGamepadSensitivity;
-            gamepadSensitivity.highValue = GameSettings.MaximumGamepadSensitivity;
-            uiScale.lowValue = GameSettings.MinimumUiScale;
-            uiScale.highValue = GameSettings.MaximumUiScale;
-            fullscreen.EnableInClassList(HiddenClass, !GameSettings.SupportsDisplaySettings);
-            RefreshControls(Game.Settings);
-
-            resumeButton.clicked += ResumeGame;
+            resumeButton.clicked += Resume;
             settingsButton.clicked += OpenSettings;
-            settingsBackButton.clicked += CloseSettings;
-            mouseSensitivity.RegisterValueChangedCallback(OnControlChanged);
-            gamepadSensitivity.RegisterValueChangedCallback(OnControlChanged);
-            uiScale.RegisterValueChangedCallback(OnControlChanged);
-            invertY.RegisterValueChangedCallback(OnToggleChanged);
-            reducedMotion.RegisterValueChangedCallback(OnToggleChanged);
-            fullscreen.RegisterValueChangedCallback(OnToggleChanged);
+            saveQuitButton.clicked += SaveAndQuit;
             GameEvents.PhaseChanged += ApplyPhase;
+            GameEvents.CancelPressed += HandleCancel;
             GameEvents.DeviceLost += ShowDeviceLost;
             GameEvents.DeviceRegained += ShowDeviceRegained;
             ApplyPhase(Game.Phase);
@@ -93,51 +72,16 @@ namespace UnknownTechnology
                 return;
             }
 
-            resumeButton.clicked -= ResumeGame;
+            resumeButton.clicked -= Resume;
             settingsButton.clicked -= OpenSettings;
-            settingsBackButton.clicked -= CloseSettings;
-            mouseSensitivity.UnregisterValueChangedCallback(OnControlChanged);
-            gamepadSensitivity.UnregisterValueChangedCallback(OnControlChanged);
-            uiScale.UnregisterValueChangedCallback(OnControlChanged);
-            invertY.UnregisterValueChangedCallback(OnToggleChanged);
-            reducedMotion.UnregisterValueChangedCallback(OnToggleChanged);
-            fullscreen.UnregisterValueChangedCallback(OnToggleChanged);
+            saveQuitButton.clicked -= SaveAndQuit;
+            settingsBinder.Unbind();
+            settingsBinder.BackRequested -= CloseSettings;
             GameEvents.PhaseChanged -= ApplyPhase;
+            GameEvents.CancelPressed -= HandleCancel;
             GameEvents.DeviceLost -= ShowDeviceLost;
             GameEvents.DeviceRegained -= ShowDeviceRegained;
             bound = false;
-        }
-
-        private void RefreshControls(GameSettings settings)
-        {
-            mouseSensitivity.SetValueWithoutNotify(settings.mouseSensitivity);
-            gamepadSensitivity.SetValueWithoutNotify(settings.gamepadSensitivity);
-            uiScale.SetValueWithoutNotify(settings.uiScale);
-            invertY.SetValueWithoutNotify(settings.invertY);
-            reducedMotion.SetValueWithoutNotify(settings.reducedMotion);
-            fullscreen.SetValueWithoutNotify(settings.fullscreen);
-        }
-
-        private void OnControlChanged(ChangeEvent<float> evt)
-        {
-            ApplySettings();
-        }
-
-        private void OnToggleChanged(ChangeEvent<bool> evt)
-        {
-            ApplySettings();
-        }
-
-        private void ApplySettings()
-        {
-            var settings = Game.Settings;
-            settings.mouseSensitivity = mouseSensitivity.value;
-            settings.gamepadSensitivity = gamepadSensitivity.value;
-            settings.invertY = invertY.value;
-            settings.uiScale = uiScale.value;
-            settings.reducedMotion = reducedMotion.value;
-            settings.fullscreen = fullscreen.value;
-            settings.Save();
         }
 
         private void ApplyPhase(GamePhase phase)
@@ -146,7 +90,7 @@ namespace UnknownTechnology
             pauseOverlay.EnableInClassList(HiddenClass, !paused);
             if (!paused)
             {
-                settingsPanel.EnableInClassList(HiddenClass, true);
+                settingsBinder.SetVisible(false);
             }
             else
             {
@@ -154,21 +98,44 @@ namespace UnknownTechnology
             }
         }
 
-        private void ResumeGame()
+        private void HandleCancel()
+        {
+            if (Game.Phase != GamePhase.Paused)
+            {
+                return;
+            }
+
+            if (settingsBinder.IsVisible)
+            {
+                CloseSettings();
+            }
+            else
+            {
+                Resume();
+            }
+        }
+
+        private void Resume()
         {
             Game.TryResume();
         }
 
         private void OpenSettings()
         {
-            settingsPanel.EnableInClassList(HiddenClass, false);
-            settingsPanel.schedule.Execute(() => mouseSensitivity.Focus());
+            settingsBinder.SetVisible(true);
         }
 
         private void CloseSettings()
         {
-            settingsPanel.EnableInClassList(HiddenClass, true);
+            settingsBinder.SetVisible(false);
             settingsButton.Focus();
+        }
+
+        private void SaveAndQuit()
+        {
+            // Save slot persistence arrives with the save system; until then this
+            // simply returns to the main menu.
+            Game.LoadScene("MainMenu", GamePhase.MainMenu);
         }
 
         private void ShowDeviceLost(string displayName)

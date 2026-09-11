@@ -45,7 +45,7 @@ namespace UnknownTechnology
                 return TryPause();
             }
 
-            if (Phase == GamePhase.Paused)
+            if (Phase == GamePhase.Paused && target != GamePhase.Loading)
             {
                 Debug.LogWarning($"Paused must be left through {nameof(TryResume)}.");
                 return false;
@@ -55,6 +55,13 @@ namespace UnknownTechnology
             {
                 Debug.LogWarning($"Transition {Phase} -> {target} is not allowed.");
                 return false;
+            }
+
+            if (Phase == GamePhase.Paused)
+            {
+                // Leaving pause directly into a scene load (save & quit):
+                // there is nothing left to resume into afterwards.
+                ResumePhase = GamePhase.Boot;
             }
 
             Commit(target);
@@ -156,6 +163,7 @@ namespace UnknownTechnology
                 GamePhase.MainMenu => target == GamePhase.Loading,
                 GamePhase.Loading => target == GamePhase.MainMenu || target == GamePhase.Exploring,
                 GamePhase.Exploring => target == GamePhase.Loading,
+                GamePhase.Paused => target == GamePhase.Loading,
                 _ => false
             };
         }

@@ -1,0 +1,53 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Main.uss" />
+    <ui:VisualElement name="settings-content" class="settings-panel">
+        <ui:Label name="settings-title" text="SETTINGS" class="settings-title" />
+        <ui:VisualElement name="tab-strip" class="tab-strip">
+            <ui:Button name="tab-control" text="Control" class="tab-button" />
+            <ui:Button name="tab-graphic" text="Graphic" class="tab-button" />
+            <ui:Button name="tab-audio" text="Audio" class="tab-button" />
+            <ui:Button name="tab-general" text="General" class="tab-button" />
+        </ui:VisualElement>
+        <ui:VisualElement name="page-control" class="tab-page">
+            <ui:VisualElement name="mouse-sensitivity-row" class="setting-row">
+                <ui:Label text="Mouse Sensitivity" class="setting-label" />
+                <ui:Slider name="mouse-sensitivity" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:VisualElement name="gamepad-sensitivity-row" class="setting-row">
+                <ui:Label text="Gamepad Sensitivity" class="setting-label" />
+                <ui:Slider name="gamepad-sensitivity" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:Toggle name="invert-y-toggle" label="Invert Y" class="setting-toggle" />
+        </ui:VisualElement>
+        <ui:VisualElement name="page-graphic" class="tab-page hidden">
+            <ui:DropdownField name="quality-dropdown" label="Quality" class="setting-dropdown" />
+            <ui:Toggle name="fullscreen-toggle" label="Fullscreen" class="setting-toggle" />
+        </ui:VisualElement>
+        <ui:VisualElement name="page-audio" class="tab-page hidden">
+            <ui:VisualElement name="master-volume-row" class="setting-row">
+                <ui:Label text="Master Volume" class="setting-label" />
+                <ui:Slider name="master-volume" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:VisualElement name="music-volume-row" class="setting-row">
+                <ui:Label text="Music Volume" class="setting-label" />
+                <ui:Slider name="music-volume" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:VisualElement name="sfx-volume-row" class="setting-row">
+                <ui:Label text="SFX Volume" class="setting-label" />
+                <ui:Slider name="sfx-volume" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:VisualElement name="ui-volume-row" class="setting-row">
+                <ui:Label text="UI Volume" class="setting-label" />
+                <ui:Slider name="ui-volume" class="setting-slider" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="page-general" class="tab-page hidden">
+            <ui:VisualElement name="ui-scale-row" class="setting-row">
+                <ui:Label text="UI Scale" class="setting-label" />
+                <ui:Slider name="ui-scale" class="setting-slider" />
+            </ui:VisualElement>
+            <ui:Toggle name="reduced-motion-toggle" label="Reduced Motion" class="setting-toggle" />
+        </ui:VisualElement>
+        <ui:Button name="settings-back-button" text="Back" class="menu-button back-button" />
+    </ui:VisualElement>
+</ui:UXML>

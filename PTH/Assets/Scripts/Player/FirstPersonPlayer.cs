@@ -26,7 +26,6 @@ namespace UnknownTechnology
 
             PlaceAtSpawn();
             GameEvents.PhaseChanged += ApplyCursor;
-            GameEvents.CancelPressed += HandleCancel;
             GameEvents.JumpPressed += HandleJump;
             ApplyCursor(Game.Phase);
         }
@@ -67,14 +66,6 @@ namespace UnknownTechnology
             }
         }
 
-        private void HandleCancel()
-        {
-            if (Game.Phase == GamePhase.Paused)
-            {
-                Game.TryResume();
-            }
-        }
-
         private void HandleJump()
         {
             jumpRequested = Game.Phase == GamePhase.Exploring;
@@ -95,7 +86,6 @@ namespace UnknownTechnology
         private void OnDestroy()
         {
             GameEvents.PhaseChanged -= ApplyCursor;
-            GameEvents.CancelPressed -= HandleCancel;
             GameEvents.JumpPressed -= HandleJump;
         }
 
