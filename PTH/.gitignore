@@ -13,6 +13,10 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
+# Game runtime data (settings, saves, diagnostics)
+/Data/*
+!/Data/README.md
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/

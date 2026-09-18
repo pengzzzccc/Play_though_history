@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Main.uss" />
+    <ui:Template src="SettingPage.uxml" name="SettingPageTemplate" />
+    <ui:VisualElement name="menu-panel" class="screen screen-background">
+        <ui:Label name="title" text="UNKNOWN TECHNOLOGY" class="menu-title" />
+        <ui:Label name="status-label" text="Investigate the missing technology relics." class="menu-status" />
+        <ui:VisualElement name="menu-buttons" class="menu-buttons">
+            <ui:Button name="play-button" text="Play" class="menu-button" />
+            <ui:Button name="settings-button" text="Settings" class="menu-button" />
+            <ui:Button name="quit-button" text="Quit" class="menu-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="play-panel" class="screen screen-background hidden">
+        <ui:Label name="play-title" text="SELECT SAVE SLOT" class="menu-title" />
+        <ui:VisualElement name="menu-buttons" class="menu-buttons">
+            <ui:Button name="slot-1-button" text="Slot 1 — Empty" class="menu-button" />
+            <ui:Button name="slot-2-button" text="Slot 2 — Empty" class="menu-button" />
+            <ui:Button name="slot-3-button" text="Slot 3 — Empty" class="menu-button" />
+            <ui:Button name="play-back-button" text="Back" class="menu-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:Instance template="SettingPageTemplate" name="settings" class="screen screen-background hidden" />
+</ui:UXML>
