@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 297320950494953372}
   - component: {fileID: 8790254074534648562}
   - component: {fileID: 606242188897559553}
+  - component: {fileID: 6344785360318462916}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -126,6 +127,25 @@ MonoBehaviour:
   motor: {fileID: 4643181199834320832}
   cameraController: {fileID: 297320950494953372}
   animationController: {fileID: 8790254074534648562}
+  scepter: {fileID: 6344785360318462916}
+--- !u!114 &6344785360318462916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682346082243987175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bf25f6ac72832a4a829857f194f6aec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnknownTechnology.Scepter
+  viewCamera: {fileID: 8365351202996771533}
+  grabRange: 10
+  holdDistance: 1.6
+  positionLerpSpeed: 12
+  rotationLerpSpeed: 6
+  snapRadius: 1.1
 --- !u!1 &1094429300654439946
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,7 +173,7 @@ Transform:
   m_GameObject: {fileID: 1094429300654439946}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5150381, y: 0, z: 0, w: 0.8571673}
-  m_LocalPosition: {x: 0.05, y: 0.03, z: 0.16}
+  m_LocalPosition: {x: -0.0675, y: 0.141, z: 0.368}
   m_LocalScale: {x: 0.035, y: 0.32, z: 0.035}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -314,7 +334,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6bcc8ee644d3bd34c818641eb23a787a, type: 2}
+  - {fileID: 2100000, guid: efe10268628330949b3a28006b1f09ca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -382,6 +402,7 @@ GameObject:
   - component: {fileID: 8159229520548745650}
   - component: {fileID: 8365351202996771533}
   - component: {fileID: 6220445259840688312}
+  - component: {fileID: 3942453886718957052}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -464,3 +485,47 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7510916066344962876}
   m_Enabled: 1
+--- !u!114 &3942453886718957052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7510916066344962876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2

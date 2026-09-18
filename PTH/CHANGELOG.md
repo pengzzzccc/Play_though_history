@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Sceptre grab-and-carry: holding the tool button grabs the nearest carryable
+  within range (the one under the crosshair takes priority) and pulls it in
+  front of the camera (kinematic follow, colliders ignored against the player);
+  pointing the sceptre at a grabbable draws an animated aim ring around it
+  (`ScepterAimRing.shader` on a billboard quad, frozen under Reduced Motion);
+  releasing drops it — or snaps it into its slot for good
+  when released inside the snap radius. Slots pulse an emissive highlight
+  while their item is carried, brightening near the snap point (steady glow
+  under Reduced Motion). New `Scepter` (Player root), `CarryableItem` and
+  `ItemSlot` (Interaction) components, `CarryableGrabbed`/`CarryablePlaced`
+  events; manual scene wiring guide in
+  `Documentation/02_TechnicalDesign/Modules/Scepter.md`.
+- Enabled Bloom on the default volume (intensity 0 → 0.25) so emissive slot
+  highlights read as a glow.
+
 ## [0.0.1] - 2026-09-10
 
 First tagged version: a playable greybox vertical slice with the final
