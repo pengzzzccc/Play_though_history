@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnknownTechnology
@@ -5,35 +6,36 @@ namespace UnknownTechnology
     /// <summary>
     /// Grab-and-carry tool driven by FirstPersonPlayer. Any carryable within
     /// grab range can be grabbed while the tool input is held (the one under
-    /// the crosshair takes priority); pointing the sceptre at a grabbable draws
-    /// an animated aim ring around it (ScepterAimRing shader on a billboard
-    /// quad). Releasing drops the item, or snaps it into its slot when released
-    /// within the snap radius.
+    /// the crosshair takes priority, seated ones included); pointing the
+    /// sceptre at a grabbable lights a fresnel rim and silhouette outline on
+    /// it. While carrying, every slot glows; aiming at a slot within place
+    /// range makes it brighter, and releasing then makes the item fly into
+    /// that slot (the item owns its flight). Releasing near a slot without
+    /// aiming snaps into the closest one; otherwise the item drops.
     /// </summary>
     public class Scepter : MonoBehaviour
     {
         [SerializeField] private Camera viewCamera;
         [SerializeField] private float grabRange = 3f;
-        [SerializeField] private float holdDistance = 1.6f;
+        [SerializeField] private float placeRange = 10f;
+        [SerializeField] private float holdDistance = 2.8f;
+        [SerializeField] private float holdSideOffset = 0.35f;
         [SerializeField] private float positionLerpSpeed = 12f;
         [SerializeField] private float rotationLerpSpeed = 6f;
         [SerializeField] private float snapRadius = 1.1f;
-        [SerializeField] private Color aimRingColor = new Color(0.25f, 0.85f, 1f);
-        [SerializeField] private Shader aimRingShader;
 
-        private const string AimRingShaderName = "Custom/ScepterAimRing";
-        // The shader draws the ring at 0.75 of the quad half-extent, so a world
-        // ring radius R needs a quad scale of R / (0.75 * 0.5).
-        private const float RingScalePerWorldRadius = 1f / 0.375f;
-
-        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-        private static readonly int MotionAmountId = Shader.PropertyToID("_MotionAmount");
+        private static readonly int RimStrengthId = Shader.PropertyToID("_RimStrength");
+        private static readonly RaycastHit[] AimHits = new RaycastHit[16];
+        private static readonly Collider[] NearbyColliders = new Collider[16];
 
         private CarryableItem carried;
         private CarryableItem aimedItem;
-        private Transform aimRing;
-        private Material aimRingMaterial;
-        private bool aimRingShaderMissing;
+        private ItemSlot aimedSlot;
+        private ItemSlot nearSlot;
+        private ItemSlot prevAimedSlot;
+        private ItemSlot prevNearSlot;
+        private readonly List<ItemSlot> carryingHighlights = new List<ItemSlot>();
+        private MaterialPropertyBlock rimBlock;
         private CharacterController playerBody;
 
         public bool IsCarrying => carried != null;
@@ -52,35 +54,23 @@ namespace UnknownTechnology
         private void OnDisable()
         {
             GameEvents.PhaseChanged -= HandlePhaseChanged;
-            HideAimRing();
+            ClearAim();
             if (carried != null)
             {
                 // Tear-down mid-carry: drop silently, gameplay feedback would
                 // reach listeners that are being destroyed with the scene.
                 carried.Drop();
-                carried.TargetSlot?.EndHighlight();
                 carried = null;
             }
-        }
 
-        private void OnDestroy()
-        {
-            if (aimRingMaterial != null)
-            {
-                Destroy(aimRingMaterial);
-            }
-
-            if (aimRing != null)
-            {
-                Destroy(aimRing.gameObject);
-            }
+            ClearCarryFeedback();
         }
 
         public void Tick(bool toolHeld, bool canControl, float deltaTime)
         {
             if (carried != null)
             {
-                HideAimRing();
+                ClearAim();
                 if (!canControl || !toolHeld)
                 {
                     Release();
@@ -88,6 +78,7 @@ namespace UnknownTechnology
                 else
                 {
                     MoveCarried(deltaTime);
+                    UpdateCarriedAim();
                 }
 
                 return;
@@ -95,7 +86,7 @@ namespace UnknownTechnology
 
             if (!canControl)
             {
-                HideAimRing();
+                ClearAim();
                 return;
             }
 
@@ -111,7 +102,7 @@ namespace UnknownTechnology
             var cam = viewCamera != null ? viewCamera : Camera.main;
             if (cam == null)
             {
-                HideAimRing();
+                ClearAim();
                 return;
             }
 
@@ -119,14 +110,45 @@ namespace UnknownTechnology
             if (Physics.Raycast(camTransform.position, camTransform.forward, out var hit, grabRange))
             {
                 var item = hit.collider.GetComponentInParent<CarryableItem>();
-                if (item != null && !item.IsPlaced && !item.IsCarried)
+                if (item != null && !item.IsCarried && !item.IsFlying)
                 {
-                    ShowAimRing(item, camTransform);
+                    AimAt(item);
                     return;
                 }
             }
 
-            HideAimRing();
+            ClearAim();
+        }
+
+        private void AimAt(CarryableItem item)
+        {
+            if (aimedItem == item)
+            {
+                return;
+            }
+
+            SetRim(aimedItem, false);
+            SetRim(item, true);
+            aimedItem = item;
+        }
+
+        private void ClearAim()
+        {
+            SetRim(aimedItem, false);
+            aimedItem = null;
+        }
+
+        private void SetRim(CarryableItem item, bool state)
+        {
+            if (item == null || item.ItemRenderer == null)
+            {
+                return;
+            }
+
+            rimBlock ??= new MaterialPropertyBlock();
+            item.ItemRenderer.GetPropertyBlock(rimBlock);
+            rimBlock.SetFloat(RimStrengthId, state ? 1f : 0f);
+            item.ItemRenderer.SetPropertyBlock(rimBlock);
         }
 
         private void TryGrab()
@@ -137,7 +159,8 @@ namespace UnknownTechnology
                 return;
             }
 
-            // Anything in range works; the target under the crosshair wins.
+            // Anything in range works, seated items included; the target under
+            // the crosshair wins.
             var item = aimedItem != null ? aimedItem : FindNearestInRange(cam.transform.position);
             if (item == null)
             {
@@ -145,14 +168,22 @@ namespace UnknownTechnology
             }
 
             carried = item;
-            aimedItem = null;
+            ClearAim();
             item.Grab();
+            item.CurrentSlot?.Vacate(item);
             if (playerBody != null && item.ItemCollider != null)
             {
                 Physics.IgnoreCollision(playerBody, item.ItemCollider, true);
             }
 
-            item.TargetSlot?.BeginHighlight();
+            // While the hand is full every slot glows as a placement hint.
+            carryingHighlights.Clear();
+            foreach (var slot in FindObjectsByType<ItemSlot>(FindObjectsSortMode.None))
+            {
+                slot.BeginHighlight();
+                carryingHighlights.Add(slot);
+            }
+
             GameEvents.RaiseCarryableGrabbed(item);
         }
 
@@ -164,7 +195,7 @@ namespace UnknownTechnology
             foreach (var hit in hits)
             {
                 var item = hit.GetComponentInParent<CarryableItem>();
-                if (item == null || item.IsPlaced || item.IsCarried)
+                if (item == null || item.IsCarried || item.IsFlying)
                 {
                     continue;
                 }
@@ -190,18 +221,99 @@ namespace UnknownTechnology
 
             var camTransform = cam.transform;
             var itemTransform = carried.transform;
-            var holdPoint = camTransform.position + camTransform.forward * holdDistance;
+            var holdPoint = camTransform.position
+                + camTransform.forward * holdDistance
+                + camTransform.right * holdSideOffset;
             itemTransform.position = Vector3.Lerp(itemTransform.position, holdPoint, deltaTime * positionLerpSpeed);
             itemTransform.rotation = Quaternion.Slerp(
                 itemTransform.rotation,
                 Quaternion.LookRotation(camTransform.forward, camTransform.up),
                 deltaTime * rotationLerpSpeed);
+        }
 
-            var slot = carried.TargetSlot;
-            if (slot != null && !slot.Filled)
+        /// <summary>
+        /// While carrying: tracks the slot under the crosshair (any slot, the
+        /// carried item itself is skipped so it cannot block the ray) and the
+        /// closest slot in snap range. Both glow brighter as "ready to place".
+        /// </summary>
+        private void UpdateCarriedAim()
+        {
+            var newAimedSlot = GetAimedSlot();
+            var newNearSlot = FindNearestSlot(carried.transform.position, snapRadius);
+
+            if (prevAimedSlot != null && prevAimedSlot != newAimedSlot && prevAimedSlot != newNearSlot)
             {
-                slot.SetNear(slot.IsInRange(itemTransform.position, snapRadius));
+                prevAimedSlot.SetNear(false);
             }
+
+            if (prevNearSlot != null && prevNearSlot != newAimedSlot && prevNearSlot != newNearSlot)
+            {
+                prevNearSlot.SetNear(false);
+            }
+
+            newAimedSlot?.SetNear(true);
+            newNearSlot?.SetNear(true);
+            aimedSlot = newAimedSlot;
+            nearSlot = newNearSlot;
+            prevAimedSlot = newAimedSlot;
+            prevNearSlot = newNearSlot;
+        }
+
+        private ItemSlot GetAimedSlot()
+        {
+            var cam = viewCamera != null ? viewCamera : Camera.main;
+            if (cam == null)
+            {
+                return null;
+            }
+
+            var camTransform = cam.transform;
+            var count = Physics.RaycastNonAlloc(
+                camTransform.position, camTransform.forward, AimHits, placeRange);
+            var bestDistance = float.MaxValue;
+            Collider bestCollider = null;
+            for (var index = 0; index < count; index++)
+            {
+                var hit = AimHits[index];
+                if (carried != null && hit.collider.transform.IsChildOf(carried.transform))
+                {
+                    continue;
+                }
+
+                if (hit.distance < bestDistance)
+                {
+                    bestDistance = hit.distance;
+                    bestCollider = hit.collider;
+                }
+            }
+
+            // Occlusion: only the closest hit counts — a wall in front of a
+            // slot blocks the throw.
+            return bestCollider != null ? bestCollider.GetComponentInParent<ItemSlot>() : null;
+        }
+
+        private ItemSlot FindNearestSlot(Vector3 position, float radius)
+        {
+            var count = Physics.OverlapSphereNonAlloc(position, radius, NearbyColliders);
+            ItemSlot nearest = null;
+            var nearestSqrDistance = float.MaxValue;
+            for (var index = 0; index < count; index++)
+            {
+                var slot = NearbyColliders[index].GetComponentInParent<ItemSlot>();
+                if (slot == null || !slot.IsInRange(position, radius))
+                {
+                    continue;
+                }
+
+                var sqrDistance = (slot.SnapPosition - position).sqrMagnitude;
+                if (sqrDistance < nearestSqrDistance)
+                {
+                    nearestSqrDistance = sqrDistance;
+                    nearest = slot;
+                }
+            }
+
+            return nearest;
         }
 
         private void Release()
@@ -213,16 +325,29 @@ namespace UnknownTechnology
                 return;
             }
 
-            var slot = item.TargetSlot;
-            if (slot != null && slot.IsInRange(item.transform.position, snapRadius))
+            // Capture the aimed slot before the feedback cleanup clears it.
+            var remoteSlot = aimedSlot;
+            var snapSlot = nearSlot;
+            ClearCarryFeedback();
+
+            if (remoteSlot != null)
             {
-                slot.Place(item);
-                GameEvents.RaiseCarryablePlaced(item);
+                item.FlyTo(remoteSlot);
+            }
+            else if (snapSlot != null)
+            {
+                if (snapSlot.Place(item))
+                {
+                    GameEvents.RaiseCarryablePlaced(item);
+                }
+                else
+                {
+                    item.Drop();
+                }
             }
             else
             {
                 item.Drop();
-                slot?.EndHighlight();
             }
 
             if (playerBody != null && item.ItemCollider != null)
@@ -231,63 +356,20 @@ namespace UnknownTechnology
             }
         }
 
-        private void ShowAimRing(CarryableItem item, Transform camTransform)
+        private void ClearCarryFeedback()
         {
-            EnsureAimRing();
-            if (aimRing == null)
+            prevAimedSlot?.SetNear(false);
+            prevNearSlot?.SetNear(false);
+            prevAimedSlot = null;
+            prevNearSlot = null;
+            aimedSlot = null;
+            nearSlot = null;
+            foreach (var slot in carryingHighlights)
             {
-                return;
+                slot.EndHighlight();
             }
 
-            aimedItem = item;
-            var bounds = item.ItemCollider != null
-                ? item.ItemCollider.bounds
-                : new Bounds(item.transform.position, Vector3.one);
-            aimRing.position = bounds.center;
-            aimRing.rotation = camTransform.rotation;
-            var radius = Mathf.Max(bounds.extents.x, bounds.extents.z) * 1.35f + 0.1f;
-            aimRing.localScale = Vector3.one * (radius * RingScalePerWorldRadius);
-            aimRingMaterial.SetFloat(MotionAmountId, Game.Settings.reducedMotion ? 0f : 1f);
-            aimRing.gameObject.SetActive(true);
-        }
-
-        private void HideAimRing()
-        {
-            aimedItem = null;
-            if (aimRing != null && aimRing.gameObject.activeSelf)
-            {
-                aimRing.gameObject.SetActive(false);
-            }
-        }
-
-        private void EnsureAimRing()
-        {
-            if (aimRing != null)
-            {
-                return;
-            }
-
-            var shader = aimRingShader != null ? aimRingShader : Shader.Find(AimRingShaderName);
-            if (shader == null)
-            {
-                if (!aimRingShaderMissing)
-                {
-                    aimRingShaderMissing = true;
-                    Debug.LogWarning($"Scepter aim ring shader '{AimRingShaderName}' not found; assign it on the Scepter component.", this);
-                }
-
-                return;
-            }
-
-            var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            quad.name = "Scepter Aim Ring";
-            Destroy(quad.GetComponent<Collider>());
-            aimRingMaterial = new Material(shader);
-            aimRingMaterial.SetColor(BaseColorId, aimRingColor * 2f);
-            quad.GetComponent<MeshRenderer>().sharedMaterial = aimRingMaterial;
-            quad.SetActive(false);
-            aimRing = quad.transform;
-            aimRing.SetParent(transform, false);
+            carryingHighlights.Clear();
         }
 
         private void HandlePhaseChanged(GamePhase phase)
