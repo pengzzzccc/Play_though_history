@@ -23,8 +23,8 @@ namespace UnknownTechnology
         private const string PlayerPrefabPath = Root + "/Prefabs/Player.prefab";
         private const string BootstrapPrefabPath = Root + "/Prefabs/GameRoot.prefab";
         private const string PanelSettingsPath = Root + "/UI/PanelSettings.asset";
-        private const string MainMenuUxmlPath = Root + "/UI/MainMenu.uxml";
-        private const string EraUiUxmlPath = Root + "/UI/EraUI.uxml";
+        private const string MainMenuUxmlPath = Root + "/UI/MainMenuPage.uxml";
+        private const string EraUiUxmlPath = Root + "/UI/GameHUD.uxml";
         private const string FloorMaterialPath = Root + "/Materials/Floor.mat";
         private const string WallMaterialPath = Root + "/Materials/Wall.mat";
         private const string AccentMaterialPath = Root + "/Materials/Accent.mat";
@@ -147,6 +147,11 @@ namespace UnknownTechnology
             var uiDocument = CreateUiDocument("Main Menu UI", MainMenuUxmlPath);
             uiDocument.AddComponent<UiScaleSettingsApplier>();
             uiDocument.AddComponent<MainMenuController>();
+
+            // Spawn the game root when this scene is played directly in the editor.
+            var devSetup = new GameObject("DevSceneSetup").AddComponent<DevSceneSetup>();
+            devSetup.Configure(LoadRequired<GameBootstrap>(BootstrapPrefabPath));
+
             CreateEventSystem();
             EditorSceneManager.SaveScene(scene, ScenePaths[1]);
         }

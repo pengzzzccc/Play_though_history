@@ -13,12 +13,7 @@ namespace UnknownTechnology
 
         public float Pitch => pitch;
 
-        public void Tick(
-            Vector2 lookInput,
-            ControlScheme controlScheme,
-            GameSettings settings,
-            bool canLook,
-            float deltaTime)
+        public void Tick(Vector2 lookInput, ControlScheme controlScheme, GameSettings settings, bool canLook, float deltaTime)
         {
             if (!canLook || playerRoot == null || pitchPivot == null)
             {

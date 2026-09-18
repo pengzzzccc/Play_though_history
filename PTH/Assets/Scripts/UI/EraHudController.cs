@@ -5,7 +5,7 @@ namespace UnknownTechnology
 {
     /// <summary>
     /// Displays the per-scene era heading of the greybox HUD. The heading text is
-    /// scene data injected by SceneBuilder; all elements come from the shared EraUI.uxml.
+    /// scene data injected by SceneBuilder; all elements come from the shared GameHUD.uxml.
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class EraHudController : MonoBehaviour

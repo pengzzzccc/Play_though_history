@@ -20,8 +20,10 @@ simplified architecture.
   clamp; walk bob and sceptre presentation honouring the Reduced Motion
   setting.
 - Pause menu with live settings: mouse/gamepad sensitivity, Y-axis inversion,
-  UI scale (1.0–1.5), reduced motion and fullscreen; clamped, persisted to
-  PlayerPrefs as JSON and broadcast on change; WebGL hides display options.
+  UI scale (1.0–1.5), reduced motion and fullscreen; clamped, persisted as
+  pretty JSON in the local `Data` folder (which also hosts future saves and
+  performance diagnostics) and broadcast on change; WebGL hides display
+  options.
 - UI Toolkit front-end: UXML documents (main menu, era HUD + pause overlay),
   shared USS with design tokens, default runtime theme, PanelSettings at
   960×600 `ScaleWithScreenSize` (match 0.5); focus-driven gamepad navigation.
