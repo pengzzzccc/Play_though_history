@@ -13,6 +13,8 @@ namespace UnknownTechnology.Audio
         [SerializeField] private AudioSource sfxSource;
         [SerializeField] private AudioSource uiSource;
 
+        [SerializeField] private AudioClip buttonClickSound;
+
         private void Awake()
         {
             ApplySettings(Game.Settings);
@@ -81,6 +83,11 @@ namespace UnknownTechnology.Audio
         public void StopMusic()
         {
             musicSource.Stop();
+        }
+
+        public void PlayButtonClickSound()
+        {
+            PlayUI(buttonClickSound);
         }
 
         public void Start()
