@@ -37,8 +37,9 @@ namespace UnknownTechnology
         private bool bound;
 
         private void Start()
-        {
+        {   
             Bind();
+            audioManager?.PlayMainMenuMusic();
         }
 
         private void OnDisable()
@@ -136,6 +137,13 @@ namespace UnknownTechnology
                 audioManager.PlayButtonClickSound();
             }
         }
+        private void StopMusic()
+        {
+            if (audioManager != null)
+            {
+                audioManager.StopMusic();
+            }
+        }
 
         private void ShowPanel(string panel)
         {
@@ -165,6 +173,8 @@ namespace UnknownTechnology
 
         private void StartNewGame(int slot)
         {
+            PlayClickSound();
+            StopMusic();
             SetInteractable(false);
             statusLabel.text = StatusLoading;
             // Save slots are recorded here once the save system exists (M13);
@@ -172,8 +182,17 @@ namespace UnknownTechnology
             Game.LoadScene(EraSceneName, GamePhase.Exploring);
         }
 
+        private void PlayMainmenuMusic()
+        {
+            if (audioManager != null)
+            {
+                audioManager.PlayMainMenuMusic();
+            }
+        }
+
         private void QuitGame()
         {
+            PlayClickSound();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else

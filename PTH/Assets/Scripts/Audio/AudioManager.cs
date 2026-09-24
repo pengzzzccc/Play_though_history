@@ -52,16 +52,15 @@ namespace UnknownTechnology.Audio
             return Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20f;
         }
 
-        public void PlayMusic(AudioClip clip)
+        public void PlayMainMenuMusic()
         {
-            if(clip == null)
+            if(testMusic == null)
             {
                 return;
             }
-            musicSource.clip = clip;
+            musicSource.clip = testMusic;
             musicSource.Play();
         }
-
         public void PlaySFX(AudioClip clip)
         {
             if(clip == null)
@@ -94,7 +93,7 @@ namespace UnknownTechnology.Audio
         {
             if (testMusic != null)
             {
-                PlayMusic(testMusic);
+                PlayMainMenuMusic();
             }
         }
 
