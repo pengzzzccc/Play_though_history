@@ -53,6 +53,7 @@ namespace UnknownTechnology
             IsCarried = false;
             CurrentSlot = slot;
             body.isKinematic = true;
+            GameEvents.RaiseCarryablePlaced(this);
         }
 
         /// <summary>
@@ -119,11 +120,7 @@ namespace UnknownTechnology
 
             IsFlying = false;
             flightRoutine = null;
-            if (slot.Place(this))
-            {
-                GameEvents.RaiseCarryablePlaced(this);
-            }
-            else
+            if (!slot.Place(this))
             {
                 Drop();
             }

@@ -336,11 +336,7 @@ namespace UnknownTechnology
             }
             else if (snapSlot != null)
             {
-                if (snapSlot.Place(item))
-                {
-                    GameEvents.RaiseCarryablePlaced(item);
-                }
-                else
+                if (!snapSlot.Place(item))
                 {
                     item.Drop();
                 }

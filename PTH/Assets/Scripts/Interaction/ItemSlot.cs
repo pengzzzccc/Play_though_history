@@ -146,6 +146,7 @@ namespace UnknownTechnology
             OccupiedItem = null;
             item.ClearSlot();
             EndHighlight();
+            GameEvents.RaiseCarryableVacated(item);
             return true;
         }
 
@@ -158,6 +159,8 @@ namespace UnknownTechnology
             {
                 item.Body.AddForce(Vector3.up * ejectPopSpeed, ForceMode.VelocityChange);
             }
+
+            GameEvents.RaiseCarryableVacated(item);
         }
 
         /// <summary>
