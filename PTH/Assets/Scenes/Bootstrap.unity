@@ -602,6 +602,7 @@ MonoBehaviour:
   musicSource: {fileID: 1223962454}
   sfxSource: {fileID: 262871322}
   uiSource: {fileID: 1204529747}
+  buttonClickSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

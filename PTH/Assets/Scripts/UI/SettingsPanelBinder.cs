@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnknownTechnology.Audio;
 
 namespace UnknownTechnology
 {
@@ -15,7 +16,7 @@ namespace UnknownTechnology
         public const string HiddenClass = "hidden";
 
         private static readonly string[] TabPageNames = { "control", "graphic", "audio", "general" };
-
+        private readonly AudioManager audioManager;
         private readonly VisualElement panel;
         private readonly Button[] tabButtons = new Button[TabPageNames.Length];
         private readonly VisualElement[] pages = new VisualElement[TabPageNames.Length];
@@ -66,6 +67,7 @@ namespace UnknownTechnology
             fullscreen = root.Q<Toggle>("fullscreen-toggle");
             qualityDropdown = root.Q<DropdownField>("quality-dropdown");
             settingsBackButton = root.Q<Button>("settings-back-button");
+            audioManager = UnityEngine.Object.FindAnyObjectByType<AudioManager>();
 
             mouseSensitivity.lowValue = GameSettings.MinimumMouseSensitivity;
             mouseSensitivity.highValue = GameSettings.MaximumMouseSensitivity;
@@ -83,6 +85,7 @@ namespace UnknownTechnology
             uiVolume.highValue = 1f;
             fullscreen.EnableInClassList(HiddenClass, !GameSettings.SupportsDisplaySettings);
 
+
             qualityDropdown.choices = new List<string>(QualitySettings.names);
 
             Refresh(Game.Settings);
@@ -91,7 +94,7 @@ namespace UnknownTechnology
             for (var index = 0; index < tabButtons.Length; index++)
             {
                 var tabIndex = index;
-                tabClickHandlers[index] = () => SelectTab(TabPageNames[tabIndex]);
+                tabClickHandlers[index] = () => {SelectTab(TabPageNames[tabIndex]); PlayClickSound(); };
                 tabButtons[index].clicked += tabClickHandlers[index];
             }
 
@@ -106,11 +109,18 @@ namespace UnknownTechnology
             reducedMotion.RegisterValueChangedCallback(OnBoolChanged);
             fullscreen.RegisterValueChangedCallback(OnBoolChanged);
             qualityDropdown.RegisterValueChangedCallback(OnQualityChanged);
-            backClickHandler = () => BackRequested?.Invoke();
+            backClickHandler = () => {PlayClickSound(); BackRequested?.Invoke(); };
             settingsBackButton.clicked += backClickHandler;
             bound = true;
         }
-
+        private void PlayClickSound()
+        {
+            if(audioManager == null)
+            {
+                return;
+            }
+            audioManager.PlayButtonClickSound();
+        }
         public void SetVisible(bool value)
         {
             if (visible == value)
