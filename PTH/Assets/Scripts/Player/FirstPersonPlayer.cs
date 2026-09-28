@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnknownTechnology.Audio;
 
 namespace UnknownTechnology
 {
@@ -14,6 +15,11 @@ namespace UnknownTechnology
         [SerializeField] private PlayerAnimationController animationController;
 
         private bool jumpRequested;
+        [SerializeField] private float footstepInterval = 0.45f;
+
+        private float footstepTimer;
+        private AudioManager audioManager;
+        private CharacterController characterController;
 
         private void Start()
         {
@@ -23,6 +29,8 @@ namespace UnknownTechnology
                 enabled = false;
                 return;
             }
+            audioManager = FindAnyObjectByType<AudioManager>();
+            characterController = GetComponent<CharacterController>();
 
             PlaceAtSpawn();
             GameEvents.PhaseChanged += ApplyCursor;
@@ -40,9 +48,29 @@ namespace UnknownTechnology
 
             var canControl = Game.Phase == GamePhase.Exploring;
             motor.Tick(input.Move, jumpRequested, canControl, Time.deltaTime);
+            UpdateFootsteps(canControl);
             jumpRequested = false;
             cameraController.Tick(input.Look, input.ControlScheme, Game.Settings, canControl, Time.deltaTime);
             animationController.Tick(motor.NormalizedSpeed, input.ToolHeld, Game.Settings, Time.deltaTime);
+        }
+        private void UpdateFootsteps(bool canControl)
+        {
+            bool isMoving = motor.NormalizedSpeed > 0.1f;
+            bool isGrounded = characterController != null && characterController.isGrounded;
+
+            if (!canControl || !isMoving || !isGrounded)
+            {
+                footstepTimer = 0f;
+                return;
+            }
+
+            footstepTimer += Time.deltaTime;
+
+            if (footstepTimer >= footstepInterval)
+            {
+                audioManager?.PlayFootstepSound();
+                footstepTimer = 0f;
+            }
         }
 
         private void PlaceAtSpawn()
