@@ -103,6 +103,7 @@ namespace UnknownTechnology.Audio
         {
             if (testMusic != null)
             {
+                ApplySettings(Game.Settings);
                 PlayMainMenuMusic();
             }
         }
