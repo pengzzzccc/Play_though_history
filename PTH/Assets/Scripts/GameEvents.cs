@@ -14,12 +14,18 @@ namespace UnknownTechnology
         public static event Action JumpPressed;
         public static event Action<string> DeviceLost;
         public static event Action<string> DeviceRegained;
+        public static event Action<CarryableItem> CarryableGrabbed;
+        public static event Action<CarryableItem> CarryablePlaced;
+        public static event Action<CarryableItem> CarryableVacated;
 
         public static void RaisePhaseChanged(GamePhase phase) => PhaseChanged?.Invoke(phase);
         public static void RaiseCancelPressed() => CancelPressed?.Invoke();
         public static void RaiseJumpPressed() => JumpPressed?.Invoke();
         public static void RaiseDeviceLost(string displayName) => DeviceLost?.Invoke(displayName);
         public static void RaiseDeviceRegained(string displayName) => DeviceRegained?.Invoke(displayName);
+        public static void RaiseCarryableGrabbed(CarryableItem item) => CarryableGrabbed?.Invoke(item);
+        public static void RaiseCarryablePlaced(CarryableItem item) => CarryablePlaced?.Invoke(item);
+        public static void RaiseCarryableVacated(CarryableItem item) => CarryableVacated?.Invoke(item);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetOnPlay()
@@ -29,6 +35,9 @@ namespace UnknownTechnology
             JumpPressed = null;
             DeviceLost = null;
             DeviceRegained = null;
+            CarryableGrabbed = null;
+            CarryablePlaced = null;
+            CarryableVacated = null;
         }
     }
 }

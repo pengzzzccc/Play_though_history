@@ -12,6 +12,7 @@ namespace UnknownTechnology
         [SerializeField] private PlayerMotor motor;
         [SerializeField] private FirstPersonCameraController cameraController;
         [SerializeField] private PlayerAnimationController animationController;
+        [SerializeField] private Scepter scepter;
 
         private bool jumpRequested;
 
@@ -43,6 +44,10 @@ namespace UnknownTechnology
             jumpRequested = false;
             cameraController.Tick(input.Look, input.ControlScheme, Game.Settings, canControl, Time.deltaTime);
             animationController.Tick(motor.NormalizedSpeed, input.ToolHeld, Game.Settings, Time.deltaTime);
+            if (scepter != null)
+            {
+                scepter.Tick(input.ToolHeld, canControl, Time.deltaTime);
+            }
         }
 
         private void PlaceAtSpawn()

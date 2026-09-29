@@ -5,6 +5,37 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Sceptre grab-and-carry: holding the tool button grabs the nearest carryable
+  within range (the one under the crosshair takes priority, seated ones
+  included) and pulls it in front of the camera (kinematic follow, colliders
+  ignored against the player); pointing the sceptre at a grabbable lights its
+  edges — a tight fresnel plus an inverted-hull silhouette outline, both
+  driven by the per-renderer `_RimStrength` (`Custom/CarryableRim` shader now
+  also samples base, occlusion and roughness maps). While the hand is full
+  every slot glows, the aimed one brightens, and releasing then makes the
+  item fly into it — the flight animation is owned by the carryable itself
+  (`FlyTo`, no slot reference on items). Items carry an optional id; a slot
+  with a matching required id flashes the placed item gold (shader
+  `_FlashAmount`, ~0.6 s decay), otherwise nothing changes. Slots are
+  idempotent, hold one item, eject the previous occupant upward when a new
+  one arrives. Slots pulse an emissive highlight
+  while their item is carried, brightening near the snap point (steady glow
+  under Reduced Motion). New `Scepter` (Player root), `CarryableItem` and
+  `ItemSlot` (Interaction) components, `CarryableGrabbed`/`CarryablePlaced`
+  events; manual scene wiring guide in
+  `Documentation/02_TechnicalDesign/Modules/Scepter.md`.
+- Bonsai exhibit prop: `Assets/Model` import cleanup (roughness/AO imported as
+  linear data maps, embedded material remapped to `tree.mat`) and a one-shot
+  Unknown Technology → Setup Bonsai Grabbable menu that builds a grabbable
+  prefab (convex MeshCollider + Rigidbody + CarryableItem) and places an
+  instance in the open scene.
+- Enabled Bloom on the default volume (intensity 0 → 0.25) so emissive slot
+  highlights read as a glow.
+
 ## [0.0.1] - 2026-09-10
 
 First tagged version: a playable greybox vertical slice with the final
