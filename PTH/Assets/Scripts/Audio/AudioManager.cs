@@ -12,6 +12,8 @@ namespace UnknownTechnology.Audio
         [SerializeField] private AudioSource musicSource;
         [SerializeField] private AudioSource sfxSource;
         [SerializeField] private AudioSource uiSource;
+        [SerializeField] private AudioClip[] footsteps;
+        [SerializeField] private AudioClip buttonClickSound;
 
         private void Awake()
         {
@@ -50,16 +52,15 @@ namespace UnknownTechnology.Audio
             return Mathf.Log10(Mathf.Max(volume, 0.0001f)) * 20f;
         }
 
-        public void PlayMusic(AudioClip clip)
+        public void PlayMainMenuMusic()
         {
-            if(clip == null)
+            if(testMusic == null)
             {
                 return;
             }
-            musicSource.clip = clip;
+            musicSource.clip = testMusic;
             musicSource.Play();
         }
-
         public void PlaySFX(AudioClip clip)
         {
             if(clip == null)
@@ -83,11 +84,26 @@ namespace UnknownTechnology.Audio
             musicSource.Stop();
         }
 
+        public void PlayButtonClickSound()
+        {
+            PlayUI(buttonClickSound);
+        }
+
+        public void PlayFootstepSound()
+        {
+            if (footsteps.Length == 0)
+            {
+                return;
+            }
+            int index = Random.Range(0, footsteps.Length);
+            PlaySFX(footsteps[index]);
+        }
+
         public void Start()
         {
             if (testMusic != null)
             {
-                PlayMusic(testMusic);
+                PlayMainMenuMusic();
             }
         }
 

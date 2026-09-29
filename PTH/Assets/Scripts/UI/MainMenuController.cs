@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnknownTechnology.Audio;
 
 namespace UnknownTechnology
 {
@@ -18,6 +19,7 @@ namespace UnknownTechnology
         private const string StatusUnavailable = "Game services are unavailable.";
         private const string StatusLoading = "Loading Ancient Exhibition...";
 
+        private AudioManager audioManager;
         private VisualElement menuPanel;
         private VisualElement playPanel;
         private Button playButton;
@@ -35,8 +37,9 @@ namespace UnknownTechnology
         private bool bound;
 
         private void Start()
-        {
+        {   
             Bind();
+            audioManager?.PlayMainMenuMusic();
         }
 
         private void OnDisable()
@@ -46,6 +49,7 @@ namespace UnknownTechnology
 
         private void Bind()
         {
+            
             if (bound)
             {
                 return;
@@ -68,10 +72,11 @@ namespace UnknownTechnology
             slotButtons[1] = root.Q<Button>("slot-2-button");
             slotButtons[2] = root.Q<Button>("slot-3-button");
             settingsBinder = new SettingsPanelBinder(root);
+            audioManager = FindAnyObjectByType<AudioManager>();
 
-            showPlayPanel = () => ShowPanel("play");
-            showSettingsPanel = () => ShowPanel("settings");
-            showMenuPanel = () => ShowPanel("menu");
+            showPlayPanel = () => { PlayClickSound(); ShowPanel("play"); };
+            showSettingsPanel = () => { PlayClickSound(); ShowPanel("settings"); };
+            showMenuPanel = () => { PlayClickSound(); ShowPanel("menu"); };
             for (var index = 0; index < slotButtons.Length; index++)
             {
                 var slot = index;
@@ -125,6 +130,21 @@ namespace UnknownTechnology
             bound = false;
         }
 
+        private void PlayClickSound()
+        {
+            if (audioManager != null)
+            {
+                audioManager.PlayButtonClickSound();
+            }
+        }
+        private void StopMusic()
+        {
+            if (audioManager != null)
+            {
+                audioManager.StopMusic();
+            }
+        }
+
         private void ShowPanel(string panel)
         {
             currentPanel = panel;
@@ -153,6 +173,8 @@ namespace UnknownTechnology
 
         private void StartNewGame(int slot)
         {
+            PlayClickSound();
+            StopMusic();
             SetInteractable(false);
             statusLabel.text = StatusLoading;
             // Save slots are recorded here once the save system exists (M13);
@@ -160,8 +182,17 @@ namespace UnknownTechnology
             Game.LoadScene(EraSceneName, GamePhase.Exploring);
         }
 
+        private void PlayMainmenuMusic()
+        {
+            if (audioManager != null)
+            {
+                audioManager.PlayMainMenuMusic();
+            }
+        }
+
         private void QuitGame()
         {
+            PlayClickSound();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
