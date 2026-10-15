@@ -1,7 +1,10 @@
+/* Shared design tokens and styles for all UI Toolkit screens.
+   Reference layout baseline: 960x600 (PanelSettings ScaleWithScreenSize, match 0.5). */
+
 :root {
     --color-menu-bg: rgb(9, 14, 19);
-    --color-button: rgba(8, 0, 255, 0.20);
-    --color-button-hover: rgba(0, 217, 255, 0.39);
+    --color-button: rgba(31, 122, 128, 0.95);
+    --color-button-hover: rgb(44, 146, 153);
     --color-pause-overlay: rgba(5, 8, 10, 0.9);
     --color-settings-panel: rgba(20, 28, 36, 0.98);
     --color-text: rgb(235, 240, 242);
@@ -21,6 +24,8 @@
 .hidden {
     display: none;
 }
+
+/* ---- Main menu ---- */
 
 .screen-background {
     background-color: var(--color-menu-bg);
@@ -57,9 +62,9 @@
     font-size: 24px;
     color: var(--color-text);
     background-color: var(--color-button);
-    border-width: 1px;
-    border-color: rgb(0, 146, 255);
-    border-radius: 0px;
+    border-width: 2px;
+    border-color: rgba(0, 0, 0, 0);
+    border-radius: 4px;
     -unity-text-align: middle-center;
 }
 
@@ -74,6 +79,8 @@
 .menu-button:disabled {
     opacity: 0.45;
 }
+
+/* ---- Era HUD ---- */
 
 .hud-heading {
     position: absolute;
@@ -108,6 +115,8 @@
     -unity-text-align: middle-center;
 }
 
+/* ---- Pause overlay ---- */
+
 .overlay {
     background-color: var(--color-pause-overlay);
 }
@@ -141,6 +150,8 @@
     color: var(--color-text);
     -unity-text-align: middle-center;
 }
+
+/* ---- Settings panel (shared template, embedded in main menu and pause) ---- */
 
 .settings-panel {
     position: absolute;
@@ -179,7 +190,7 @@
 }
 
 .tab-button:hover {
-    background-color: rgba(0, 251, 255, 0.49);
+    background-color: rgba(255, 255, 255, 0.12);
 }
 
 .tab-button--active {
@@ -227,5 +238,3 @@
     margin-top: 8px;
     margin-bottom: 0;
 }
-
-
