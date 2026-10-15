@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnknownTechnology.Audio;
 
 namespace UnknownTechnology
 {
@@ -12,7 +13,7 @@ namespace UnknownTechnology
     public class PauseMenuController : MonoBehaviour
     {
         private const string HiddenClass = "hidden";
-
+        private AudioManager audioManager;
         private VisualElement pauseOverlay;
         private Button resumeButton;
         private Button settingsButton;
@@ -51,6 +52,7 @@ namespace UnknownTechnology
             deviceMessage = root.Q<Label>("device-message");
             settingsBinder = new SettingsPanelBinder(root);
             settingsBinder.BackRequested += CloseSettings;
+            audioManager = FindAnyObjectByType<AudioManager>();
 
             pauseOverlay.AddToClassList(HiddenClass);
             bound = true;
@@ -114,25 +116,36 @@ namespace UnknownTechnology
                 Resume();
             }
         }
+        private void PlayClickSound()
+        {
+            if (audioManager != null)
+            {
+                audioManager.PlayButtonClickSound();
+            }
+        }
 
         private void Resume()
         {
+            PlayClickSound();
             Game.TryResume();
         }
 
         private void OpenSettings()
         {
+            PlayClickSound();
             settingsBinder.SetVisible(true);
         }
 
         private void CloseSettings()
         {
+            PlayClickSound();
             settingsBinder.SetVisible(false);
             settingsButton.Focus();
         }
 
         private void SaveAndQuit()
         {
+            PlayClickSound();
             // Save slot persistence arrives with the save system; until then this
             // simply returns to the main menu.
             Game.LoadScene("MainMenu", GamePhase.MainMenu);
