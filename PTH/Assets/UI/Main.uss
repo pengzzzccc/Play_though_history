@@ -3,8 +3,8 @@
 
 :root {
     --color-menu-bg: rgb(9, 14, 19);
-    --color-button: rgba(31, 122, 128, 0.95);
-    --color-button-hover: rgb(44, 146, 153);
+    --color-button: rgba(33, 72, 111, 0.42);
+    --color-button-hover: rgba(80, 237, 255, 0.33);
     --color-pause-overlay: rgba(5, 8, 10, 0.9);
     --color-settings-panel: rgba(20, 28, 36, 0.98);
     --color-text: rgb(235, 240, 242);
