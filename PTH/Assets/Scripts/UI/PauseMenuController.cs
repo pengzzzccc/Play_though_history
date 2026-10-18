@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnknownTechnology.Audio;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 namespace UnknownTechnology
 {
@@ -25,43 +26,16 @@ namespace UnknownTechnology
         private Label deviceMessage;
         private SettingsPanelBinder settingsBinder;
         private VisualElement uiRoot;
-
-        // Canvas quiz reference
-        [Header("Quiz UI")]
-        [SerializeField] private GameObject quizPanel;
-
         private bool bound;
-        private bool quizIsOpen;
-
-        private CursorLockMode previousCursorLockState;
-        private bool previousCursorVisibility;
-
-        public static bool IsQuizOpen { get; private set; }
 
         private void Start()
         {
-            // Make sure the quiz panel starts hidden.
-            if (quizPanel != null)
-            {
-                quizPanel.SetActive(false);
-            }
-
-            IsQuizOpen = false;
-            quizIsOpen = false;
-
             Bind();
         }
 
         private void OnDisable()
         {
             Unbind();
-
-            // Avoid leaving the cursor unlocked if this component is disabled
-            // while the quiz is open.
-            if (quizIsOpen)
-            {
-                CloseQuiz();
-            }
         }
 
         private void Bind()
@@ -215,77 +189,5 @@ namespace UnknownTechnology
                 deviceMessage.text = $"{displayName} connected.";
         }
 
-        private void Update()
-        {
-            if (Keyboard.current == null)
-                return;
-
-            if (Keyboard.current.tKey.wasPressedThisFrame)
-                ToggleQuiz();
-        }
-
-        private void ToggleQuiz()
-        {
-            if (quizPanel == null)
-                return;
-
-            // Do not open the quiz while the pause menu is active.
-            if (!quizIsOpen && Game.Phase == GamePhase.Paused)
-                return;
-
-            if (quizIsOpen)
-                CloseQuiz();
-            else
-                OpenQuiz();
-        }
-
-        public void OpenQuiz()
-        {
-            if (uiRoot != null)
-                uiRoot.style.display = DisplayStyle.None;
-
-            if (quizPanel == null || quizIsOpen)
-                return;
-
-            if (Game.Phase == GamePhase.Paused)
-                return;
-
-            previousCursorLockState = UnityEngine.Cursor.lockState;
-            previousCursorVisibility = UnityEngine.Cursor.visible;
-
-            quizIsOpen = true;
-            IsQuizOpen = true;
-
-            UnityEngine.Cursor.lockState = CursorLockMode.None;
-            UnityEngine.Cursor.visible = true;
-
-            quizPanel.SetActive(true);
-        }
-
-        public void CloseQuiz()
-        {
-            if (uiRoot != null)
-                uiRoot.style.display = DisplayStyle.Flex;
-                
-            if (!quizIsOpen)
-            {
-                // Also ensure the panel is hidden if it was opened accidentally
-                // in the Inspector or by another script.
-                if (quizPanel != null)
-                    quizPanel.SetActive(false);
-
-                IsQuizOpen = false;
-                return;
-            }
-
-            quizIsOpen = false;
-            IsQuizOpen = false;
-
-            if (quizPanel != null)
-                quizPanel.SetActive(false);
-
-            UnityEngine.Cursor.lockState = previousCursorLockState;
-            UnityEngine.Cursor.visible = previousCursorVisibility;
-        }
     }
 }
