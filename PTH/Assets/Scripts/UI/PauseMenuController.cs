@@ -2,14 +2,11 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnknownTechnology.Audio;
-using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
 
 namespace UnknownTechnology
 {
     /// <summary>
-    /// Controls the pause menu and the Canvas-based quiz.
-    /// The pause menu uses UI Toolkit; the quiz uses Unity Canvas UI.
+    /// Controls the UI Toolkit pause menu and its settings panel.
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class PauseMenuController : MonoBehaviour
@@ -25,7 +22,6 @@ namespace UnknownTechnology
         private Button saveQuitButton;
         private Label deviceMessage;
         private SettingsPanelBinder settingsBinder;
-        private VisualElement uiRoot;
         private bool bound;
 
         private void Start()
@@ -44,7 +40,6 @@ namespace UnknownTechnology
                 return;
 
             var root = GetComponent<UIDocument>().rootVisualElement;
-            uiRoot = root;
 
             if (root == null)
                 return;

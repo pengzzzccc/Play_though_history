@@ -1,7 +1,6 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
@@ -11,13 +10,11 @@ namespace UnknownTechnology
     {
         [Header("Canvas Quiz")]
         [SerializeField] private GameObject quizPanel;
+        [SerializeField] private GameObject completionPanel;
 
         [Header("ERA UI")]
         [Tooltip("The GameObject containing the ERA UI Toolkit UIDocument.")]
         [SerializeField] private GameObject eraUIObject;
-
-        [Header("Input")]
-        [SerializeField] private Key toggleQuizKey = Key.T;
 
         public static bool IsQuizOpen { get; private set; }
 
@@ -29,8 +26,8 @@ namespace UnknownTechnology
             IsQuizOpen = false;
             if (quizPanel != null)
                 quizPanel.SetActive(false);
-
-            
+            if (completionPanel != null)
+                completionPanel.SetActive(false);
         }
 
         private void Update()
@@ -38,15 +35,8 @@ namespace UnknownTechnology
             if (IsQuizOpen && Game.Runtime != null && Game.Phase != GamePhase.Exploring)
                 CloseQuiz();
 
-            if (Keyboard.current != null &&
-                (Keyboard.current[toggleQuizKey].wasPressedThisFrame ||
-                 (IsQuizOpen && Keyboard.current.escapeKey.wasPressedThisFrame)))
-            {
-                if (IsQuizOpen)
-                    CloseQuiz();
-                else
-                    OpenQuiz();
-            }
+            if (IsQuizOpen && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+                CloseQuiz();
         }
 
         public void OpenQuiz()
@@ -70,13 +60,13 @@ namespace UnknownTechnology
                 eraUIObject.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
 
             // Show the Canvas quiz.
+            if (completionPanel != null)
+                completionPanel.SetActive(false);
             quizPanel.SetActive(true);
 
             // Allow the mouse to interact with Canvas buttons.
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            Debug.Log("CanvasQuizUI: Quiz opened.");
         }
 
         public void CloseQuiz()
@@ -86,6 +76,8 @@ namespace UnknownTechnology
 
             if (quizPanel != null)
                 quizPanel.SetActive(false);
+            if (completionPanel != null)
+                completionPanel.SetActive(false);
 
             IsQuizOpen = false;
 
@@ -99,8 +91,6 @@ namespace UnknownTechnology
                 Cursor.lockState = previousCursorLockState;
                 Cursor.visible = previousCursorVisible;
             }
-
-            Debug.Log("CanvasQuizUI: Quiz closed.");
         }
 
         private void OnDisable()

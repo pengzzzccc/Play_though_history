@@ -33,8 +33,6 @@ namespace UnknownTechnology
         private CarryableItem aimedItem;
         private ItemSlot aimedSlot;
         private ItemSlot nearSlot;
-        private ItemSlot prevAimedSlot;
-        private ItemSlot prevNearSlot;
         private readonly List<ItemSlot> carryingHighlights = new List<ItemSlot>();
         private MaterialPropertyBlock rimBlock;
         private CharacterController playerBody;
@@ -192,7 +190,7 @@ namespace UnknownTechnology
 
             // While the hand is full every slot glows as a placement hint.
             carryingHighlights.Clear();
-            foreach (var slot in FindObjectsByType<ItemSlot>(FindObjectsSortMode.None))
+            foreach (var slot in FindObjectsByType<ItemSlot>())
             {
                 slot.BeginHighlight();
                 carryingHighlights.Add(slot);
@@ -257,22 +255,20 @@ namespace UnknownTechnology
             var newAimedSlot = GetAimedSlot();
             var newNearSlot = FindNearestSlot(carried.transform.position, snapRadius);
 
-            if (prevAimedSlot != null && prevAimedSlot != newAimedSlot && prevAimedSlot != newNearSlot)
+            if (aimedSlot != null && aimedSlot != newAimedSlot && aimedSlot != newNearSlot)
             {
-                prevAimedSlot.SetNear(false);
+                aimedSlot.SetNear(false);
             }
 
-            if (prevNearSlot != null && prevNearSlot != newAimedSlot && prevNearSlot != newNearSlot)
+            if (nearSlot != null && nearSlot != newAimedSlot && nearSlot != newNearSlot)
             {
-                prevNearSlot.SetNear(false);
+                nearSlot.SetNear(false);
             }
 
             newAimedSlot?.SetNear(true);
             newNearSlot?.SetNear(true);
             aimedSlot = newAimedSlot;
             nearSlot = newNearSlot;
-            prevAimedSlot = newAimedSlot;
-            prevNearSlot = newNearSlot;
         }
 
         private ItemSlot GetAimedSlot()
@@ -381,10 +377,8 @@ namespace UnknownTechnology
 
         private void ClearCarryFeedback()
         {
-            prevAimedSlot?.SetNear(false);
-            prevNearSlot?.SetNear(false);
-            prevAimedSlot = null;
-            prevNearSlot = null;
+            aimedSlot?.SetNear(false);
+            nearSlot?.SetNear(false);
             aimedSlot = null;
             nearSlot = null;
             foreach (var slot in carryingHighlights)

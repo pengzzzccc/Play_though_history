@@ -86,9 +86,6 @@ public class QuizManager : MonoBehaviour
             answerButtons[i].gameObject.SetActive(true);
             answerButtons[i].interactable = true;
             answerButtonTexts[i].text = question.answers[i];
-        }
-        for (int i = 0; i < answerButtons.Length; i++)
-        {
             answerButtons[i].image.color = originalColours[i];
         }
     }
@@ -132,7 +129,12 @@ public class QuizManager : MonoBehaviour
                 quizPanel.SetActive(false);
 
             if (completionPanel != null)
-                completionPanel.SetActive(true);
+            {
+                // Keep completion hidden if the player closed the quiz during answer feedback.
+                completionPanel.SetActive(UnknownTechnology.CanvasQuizUI.IsQuizOpen);
+                if (completionPanel.activeInHierarchy)
+                    completionPanel.GetComponentInChildren<Button>()?.Select();
+            }
             else
                 FindAnyObjectByType<UnknownTechnology.CanvasQuizUI>()?.CloseQuiz();
 

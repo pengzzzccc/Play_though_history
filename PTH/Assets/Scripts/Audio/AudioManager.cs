@@ -45,7 +45,6 @@ namespace UnknownTechnology.Audio
 
         private void Awake()
         {
-            ApplySettings(Game.Settings);
             Game.Settings.Changed += ApplySettings;
         }
 
@@ -184,13 +183,9 @@ namespace UnknownTechnology.Audio
             PlaySFX(footsteps[index]);
         }
 
-        public void Start()
+        private void Start()
         {
-            if (testMusic != null)
-            {
-                ApplySettings(Game.Settings);
-                PlayMainMenuMusic();
-            }
+            ApplySettings(Game.Settings);
         }
 
         private void ApplySettings(GameSettings settings)

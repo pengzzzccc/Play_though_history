@@ -182,14 +182,6 @@ namespace UnknownTechnology
             Game.LoadScene(EraSceneName, GamePhase.Exploring);
         }
 
-        private void PlayMainmenuMusic()
-        {
-            if (audioManager != null)
-            {
-                audioManager.PlayMainMenuMusic();
-            }
-        }
-
         private void QuitGame()
         {
             PlayClickSound();
