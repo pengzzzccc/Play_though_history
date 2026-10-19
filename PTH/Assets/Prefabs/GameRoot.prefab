@@ -485,3 +485,9 @@ MonoBehaviour:
   uiSource: {fileID: 3011955544047676247}
   footsteps: []
   buttonClickSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
+  scepterPickupSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
+  scepterCarryLoop: {fileID: 0}
+  scepterDropSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
+  scepterPlaceSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
+  scepterVolume: 1
+  scepterCarryVolume: 0.4

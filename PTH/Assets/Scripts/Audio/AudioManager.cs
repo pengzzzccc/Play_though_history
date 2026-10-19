@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 
 
 namespace UnknownTechnology.Audio
@@ -14,6 +15,33 @@ namespace UnknownTechnology.Audio
         [SerializeField] private AudioSource uiSource;
         [SerializeField] private AudioClip[] footsteps;
         [SerializeField] private AudioClip buttonClickSound;
+
+        [Header("Scepter")]
+        [FormerlySerializedAs("scepterGrabSound")]
+        [Tooltip("Plays when the scepter successfully picks up an object.")]
+        [SerializeField] private AudioClip scepterPickupSound;
+        [Tooltip("Optional loop that plays while the scepter carries an object.")]
+        [SerializeField] private AudioClip scepterCarryLoop;
+        [FormerlySerializedAs("scepterReleaseSound")]
+        [Tooltip("Plays when an object is dropped, rather than placed into a slot.")]
+        [SerializeField] private AudioClip scepterDropSound;
+        [Tooltip("Plays when an object actually arrives in a slot.")]
+        [SerializeField] private AudioClip scepterPlaceSound;
+        [SerializeField, Range(0f, 1f)] private float scepterVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float scepterCarryVolume = 0.4f;
+
+        private AudioSource scepterCarrySource;
+
+        private void OnEnable()
+        {
+            GameEvents.CarryablePlaced += HandleCarryablePlaced;
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.CarryablePlaced -= HandleCarryablePlaced;
+            StopScepterCarrySound();
+        }
 
         private void Awake()
         {
@@ -63,11 +91,72 @@ namespace UnknownTechnology.Audio
         }
         public void PlaySFX(AudioClip clip)
         {
-            if(clip == null)
+            PlaySFX(clip, 1f);
+        }
+
+        private void PlaySFX(AudioClip clip, float volumeScale)
+        {
+            if (clip == null || sfxSource == null || !isActiveAndEnabled)
             {
                 return;
             }
-            sfxSource.PlayOneShot(clip);
+            sfxSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
+        }
+
+        public void PlayScepterPickupSound()
+        {
+            PlaySFX(scepterPickupSound, scepterVolume);
+        }
+
+        public void PlayScepterDropSound()
+        {
+            PlaySFX(scepterDropSound, scepterVolume);
+        }
+
+        public void StartScepterCarrySound()
+        {
+            if (scepterCarryLoop == null || sfxSource == null || !isActiveAndEnabled)
+            {
+                return;
+            }
+
+            if (scepterCarrySource == null)
+            {
+                // A dedicated source lets the hum stop without cutting off
+                // footsteps or other one-shot effects on the shared SFX source.
+                var sourceObject = new GameObject("ScepterCarrySource");
+                sourceObject.transform.SetParent(transform, false);
+                scepterCarrySource = sourceObject.AddComponent<AudioSource>();
+                scepterCarrySource.playOnAwake = false;
+                scepterCarrySource.loop = true;
+                scepterCarrySource.spatialBlend = 0f;
+            }
+
+            if (scepterCarrySource.isPlaying)
+            {
+                return;
+            }
+
+            scepterCarrySource.outputAudioMixerGroup = sfxSource.outputAudioMixerGroup;
+            scepterCarrySource.volume = scepterCarryVolume;
+            scepterCarrySource.clip = scepterCarryLoop;
+            scepterCarrySource.Play();
+        }
+
+        public void StopScepterCarrySound()
+        {
+            if (scepterCarrySource != null && scepterCarrySource.isPlaying)
+            {
+                scepterCarrySource.Stop();
+            }
+        }
+
+        private void HandleCarryablePlaced(CarryableItem item)
+        {
+            if (Game.Phase == GamePhase.Exploring)
+            {
+                PlaySFX(scepterPlaceSound, scepterVolume);
+            }
         }
 
         public void PlayUI(AudioClip clip)
