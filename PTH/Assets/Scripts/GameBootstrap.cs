@@ -122,7 +122,7 @@ namespace UnknownTechnology
             var mapName = phase switch
             {
                 GamePhase.Exploring => CanvasQuizUI.IsQuizOpen ? "UI" : "Gameplay",
-                GamePhase.MainMenu or GamePhase.Paused => "UI",
+                GamePhase.MainMenu or GamePhase.Paused or GamePhase.Flashback => "UI",
                 _ => string.Empty
             };
 

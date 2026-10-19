@@ -10,7 +10,8 @@ namespace UnknownTechnology
         MainMenu = 1,
         Loading = 2,
         Exploring = 3,
-        Paused = 4
+        Paused = 4,
+        Flashback = 5
     }
 
     public enum ControlScheme
@@ -162,7 +163,8 @@ namespace UnknownTechnology
                 GamePhase.Boot => target == GamePhase.Loading || target == GamePhase.MainMenu || target == GamePhase.Exploring,
                 GamePhase.MainMenu => target == GamePhase.Loading,
                 GamePhase.Loading => target == GamePhase.MainMenu || target == GamePhase.Exploring,
-                GamePhase.Exploring => target == GamePhase.Loading,
+                GamePhase.Exploring => target == GamePhase.Loading || target == GamePhase.Flashback,
+                GamePhase.Flashback => target == GamePhase.Exploring || target == GamePhase.Loading,
                 GamePhase.Paused => target == GamePhase.Loading,
                 _ => false
             };
