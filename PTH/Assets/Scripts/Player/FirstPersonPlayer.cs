@@ -85,12 +85,12 @@ namespace UnknownTechnology
                 return;
             }
 
-            footstepTimer += Time.deltaTime;
+            footstepTimer -= Time.deltaTime;
 
-            if (footstepTimer >= footstepInterval)
+            if (footstepTimer <= 0f)
             {
                 audioManager?.PlayFootstepSound();
-                footstepTimer = 0f;
+                footstepTimer = footstepInterval;
             }
         }
 

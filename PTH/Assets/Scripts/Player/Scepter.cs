@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnknownTechnology.Audio;
 
 namespace UnknownTechnology
 {
@@ -37,6 +38,7 @@ namespace UnknownTechnology
         private readonly List<ItemSlot> carryingHighlights = new List<ItemSlot>();
         private MaterialPropertyBlock rimBlock;
         private CharacterController playerBody;
+        private AudioManager audioManager;
 
         public bool IsCarrying => carried != null;
         public CarryableItem Carried => carried;
@@ -44,6 +46,11 @@ namespace UnknownTechnology
         private void Awake()
         {
             playerBody = GetComponent<CharacterController>();
+        }
+
+        private void Start()
+        {
+            audioManager = FindAnyObjectByType<AudioManager>();
         }
 
         private void OnEnable()
@@ -54,6 +61,7 @@ namespace UnknownTechnology
         private void OnDisable()
         {
             GameEvents.PhaseChanged -= HandlePhaseChanged;
+            audioManager?.StopScepterCarrySound();
             ClearAim();
             if (carried != null)
             {
@@ -68,6 +76,12 @@ namespace UnknownTechnology
 
         public void Tick(bool toolHeld, bool canControl, float deltaTime)
         {
+            // An item can also disappear while held (for example on scene unload).
+            if (carried == null)
+            {
+                audioManager?.StopScepterCarrySound();
+            }
+
             if (carried != null)
             {
                 ClearAim();
@@ -185,6 +199,8 @@ namespace UnknownTechnology
             }
 
             GameEvents.RaiseCarryableGrabbed(item);
+            audioManager?.PlayScepterPickupSound();
+            audioManager?.StartScepterCarrySound();
         }
 
         private CarryableItem FindNearestInRange(Vector3 center)
@@ -318,6 +334,7 @@ namespace UnknownTechnology
 
         private void Release()
         {
+            audioManager?.StopScepterCarrySound();
             var item = carried;
             carried = null;
             if (item == null)
@@ -338,17 +355,27 @@ namespace UnknownTechnology
             {
                 if (!snapSlot.Place(item))
                 {
-                    item.Drop();
+                    DropItem(item);
                 }
             }
             else
             {
-                item.Drop();
+                DropItem(item);
             }
 
             if (playerBody != null && item.ItemCollider != null)
             {
                 Physics.IgnoreCollision(playerBody, item.ItemCollider, false);
+            }
+        }
+
+        private void DropItem(CarryableItem item)
+        {
+            item.Drop();
+            // Phase changes also release items; keep pause and scene transitions silent.
+            if (Game.Phase == GamePhase.Exploring)
+            {
+                audioManager?.PlayScepterDropSound();
             }
         }
 
