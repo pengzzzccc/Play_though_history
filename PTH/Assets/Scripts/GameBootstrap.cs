@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 
 namespace UnknownTechnology
@@ -19,6 +20,7 @@ namespace UnknownTechnology
         private InputAction toolAction;
         private GamePhase pendingPhase;
         private bool hasPendingPhase;
+        private bool quizWasOpen;
 
         public Vector2 Move => moveAction != null && moveAction.enabled ? moveAction.ReadValue<Vector2>() : Vector2.zero;
         public Vector2 Look => lookAction != null && lookAction.enabled ? lookAction.ReadValue<Vector2>() : Vector2.zero;
@@ -86,6 +88,16 @@ namespace UnknownTechnology
 
         private void LateUpdate()
         {
+            // Share the player's actions with the current scene's UI module.
+            if (playerInput.uiInputModule == null)
+                playerInput.uiInputModule = FindAnyObjectByType<InputSystemUIInputModule>();
+
+            if (quizWasOpen != CanvasQuizUI.IsQuizOpen)
+            {
+                quizWasOpen = CanvasQuizUI.IsQuizOpen;
+                QueuePhase(Game.Phase);
+            }
+
             if (!hasPendingPhase)
             {
                 return;
@@ -109,7 +121,7 @@ namespace UnknownTechnology
 
             var mapName = phase switch
             {
-                GamePhase.Exploring => "Gameplay",
+                GamePhase.Exploring => CanvasQuizUI.IsQuizOpen ? "UI" : "Gameplay",
                 GamePhase.MainMenu or GamePhase.Paused => "UI",
                 _ => string.Empty
             };

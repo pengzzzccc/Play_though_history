@@ -48,7 +48,7 @@ namespace UnknownTechnology
                 return;
             }
 
-            var canControl = Game.Phase == GamePhase.Exploring;
+            var canControl = Game.Phase == GamePhase.Exploring && !CanvasQuizUI.IsQuizOpen;
 
             motor.Tick(input.Move, jumpRequested, canControl, Time.deltaTime);
             UpdateFootsteps(canControl);

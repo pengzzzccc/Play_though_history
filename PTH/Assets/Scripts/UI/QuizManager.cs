@@ -46,8 +46,7 @@ public class QuizManager : MonoBehaviour
         if (completionPanel != null)
             completionPanel.SetActive(false);
 
-        if (quizPanel != null)
-            quizPanel.SetActive(true);
+        // CanvasQuizUI controls when the quiz is visible.
 
         // Connect each button to its answer index.
         for (int i = 0; i < answerButtons.Length; i++)
@@ -128,7 +127,11 @@ public class QuizManager : MonoBehaviour
 
             if (completionPanel != null)
                 completionPanel.SetActive(true);
+            else
+                FindAnyObjectByType<UnknownTechnology.CanvasQuizUI>()?.CloseQuiz();
 
+            currentQuestionIndex = 0;
+            DisplayQuestion();
             return;
         }
 

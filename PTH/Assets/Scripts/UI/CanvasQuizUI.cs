@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
 namespace UnknownTechnology
 {
@@ -33,8 +35,12 @@ namespace UnknownTechnology
 
         private void Update()
         {
+            if (IsQuizOpen && Game.Runtime != null && Game.Phase != GamePhase.Exploring)
+                CloseQuiz();
+
             if (Keyboard.current != null &&
-                Keyboard.current[toggleQuizKey].wasPressedThisFrame)
+                (Keyboard.current[toggleQuizKey].wasPressedThisFrame ||
+                 (IsQuizOpen && Keyboard.current.escapeKey.wasPressedThisFrame)))
             {
                 if (IsQuizOpen)
                     CloseQuiz();
@@ -51,7 +57,7 @@ namespace UnknownTechnology
                 return;
             }
 
-            if (IsQuizOpen)
+            if (IsQuizOpen || (Game.Runtime != null && Game.Phase != GamePhase.Exploring))
                 return;
 
             previousCursorVisible = Cursor.visible;
@@ -59,9 +65,9 @@ namespace UnknownTechnology
 
             IsQuizOpen = true;
 
-            // Disable the ERA UI Toolkit object.
+            // Hide the HUD without disabling its pause-menu bindings.
             if (eraUIObject != null)
-                eraUIObject.SetActive(false);
+                eraUIObject.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
 
             // Show the Canvas quiz.
             quizPanel.SetActive(true);
@@ -83,13 +89,16 @@ namespace UnknownTechnology
 
             IsQuizOpen = false;
 
-            // Restore the ERA UI object.
+            // Restore the HUD.
             if (eraUIObject != null)
-                eraUIObject.SetActive(true);
+                eraUIObject.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.Flex;
 
             // Restore the cursor state from before the quiz opened.
-            Cursor.lockState = previousCursorLockState;
-            Cursor.visible = previousCursorVisible;
+            if (Game.Runtime == null || Game.Phase == GamePhase.Exploring)
+            {
+                Cursor.lockState = previousCursorLockState;
+                Cursor.visible = previousCursorVisible;
+            }
 
             Debug.Log("CanvasQuizUI: Quiz closed.");
         }
