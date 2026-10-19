@@ -89,12 +89,8 @@ namespace UnknownTechnology.Audio
             musicSource.clip = testMusic;
             musicSource.Play();
         }
-        public void PlaySFX(AudioClip clip)
-        {
-            PlaySFX(clip, 1f);
-        }
 
-        private void PlaySFX(AudioClip clip, float volumeScale)
+        private void PlaySFX(AudioClip clip, float volumeScale = 1f)
         {
             if (clip == null || sfxSource == null || !isActiveAndEnabled)
             {

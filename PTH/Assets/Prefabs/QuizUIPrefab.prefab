@@ -1045,6 +1045,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aed151e827fae6e498e54c8105ffba12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuizManager
+  correctAnswerSound: {fileID: 8300000, guid: cd51c274f35199349a8a70da6d03c72a, type: 3}
+  incorrectAnswerSound: {fileID: 8300000, guid: e9403469a875db14d9e31bdfad434427, type: 3}
   questions:
   - questionText: The answer is D
     answers:

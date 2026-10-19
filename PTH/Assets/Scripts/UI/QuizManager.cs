@@ -2,10 +2,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using UnknownTechnology.Audio;
 public class QuizManager : MonoBehaviour
 {
+    [SerializeField] private AudioClip correctAnswerSound;
+    [SerializeField] private AudioClip incorrectAnswerSound;
+    private AudioManager audioManager;
     [System.Serializable]
+
     public class Question
     {
         [TextArea]
@@ -39,10 +43,11 @@ public class QuizManager : MonoBehaviour
     private int currentQuestionIndex = 0;
     private bool questionAnswered = false;
 
-    
+
 
     private void Start()
     {
+        audioManager = FindAnyObjectByType<AudioManager>();
         if (completionPanel != null)
             completionPanel.SetActive(false);
 
@@ -99,6 +104,7 @@ public class QuizManager : MonoBehaviour
         {
             questionAnswered = true;
             feedbackText.text = "Correct!";
+            audioManager.PlayUI(correctAnswerSound);
 
             answerButtons[selectedAnswerIndex].image.color = correctColour;
 
@@ -110,7 +116,7 @@ public class QuizManager : MonoBehaviour
         else
         {
             feedbackText.text = "Incorrect! Try again.";
-
+            audioManager.PlayUI(incorrectAnswerSound);
             answerButtons[selectedAnswerIndex].image.color = incorrectColour;
         }
     }
