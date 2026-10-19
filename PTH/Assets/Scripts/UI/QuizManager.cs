@@ -104,7 +104,7 @@ public class QuizManager : MonoBehaviour
         {
             questionAnswered = true;
             feedbackText.text = "Correct!";
-            audioManager.PlayUI(correctAnswerSound);
+            audioManager?.PlayUI(correctAnswerSound);
 
             answerButtons[selectedAnswerIndex].image.color = correctColour;
 
@@ -116,7 +116,7 @@ public class QuizManager : MonoBehaviour
         else
         {
             feedbackText.text = "Incorrect! Try again.";
-            audioManager.PlayUI(incorrectAnswerSound);
+            audioManager?.PlayUI(incorrectAnswerSound);
             answerButtons[selectedAnswerIndex].image.color = incorrectColour;
         }
     }
