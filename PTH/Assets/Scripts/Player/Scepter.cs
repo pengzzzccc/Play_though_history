@@ -9,7 +9,8 @@ namespace UnknownTechnology
     /// grab range can be grabbed while the tool input is held (the one under
     /// the crosshair takes priority, seated ones included); pointing the
     /// sceptre at a grabbable lights a fresnel rim and silhouette outline on
-    /// it. While carrying, every slot glows; aiming at a slot within place
+    /// it, fading in and out and dimming towards the edge of grab range.
+    /// While carrying, every slot glows; aiming at a slot within place
     /// range makes it brighter, and releasing then makes the item fly into
     /// that slot (the item owns its flight). Releasing near a slot without
     /// aiming snaps into the closest one; otherwise the item drops.
@@ -24,8 +25,8 @@ namespace UnknownTechnology
         [SerializeField] private float positionLerpSpeed = 12f;
         [SerializeField] private float rotationLerpSpeed = 6f;
         [SerializeField] private float snapRadius = 1.1f;
+        [SerializeField] private float highlightFullDistance = 4f;
 
-        private static readonly int RimStrengthId = Shader.PropertyToID("_RimStrength");
         private static readonly RaycastHit[] AimHits = new RaycastHit[16];
         private static readonly Collider[] NearbyColliders = new Collider[16];
 
@@ -34,7 +35,6 @@ namespace UnknownTechnology
         private ItemSlot aimedSlot;
         private ItemSlot nearSlot;
         private readonly List<ItemSlot> carryingHighlights = new List<ItemSlot>();
-        private MaterialPropertyBlock rimBlock;
         private CharacterController playerBody;
         private AudioManager audioManager;
 
@@ -124,7 +124,7 @@ namespace UnknownTechnology
                 var item = hit.collider.GetComponentInParent<CarryableItem>();
                 if (item != null && !item.IsCarried && !item.IsFlying)
                 {
-                    AimAt(item);
+                    AimAt(item, HighlightAtDistance(hit.distance));
                     return;
                 }
             }
@@ -132,35 +132,39 @@ namespace UnknownTechnology
             ClearAim();
         }
 
-        private void AimAt(CarryableItem item)
+        private void AimAt(CarryableItem item, float strength)
         {
-            if (aimedItem == item)
+            if (aimedItem != null && aimedItem != item)
             {
-                return;
+                aimedItem.SetHighlight(0f);
             }
 
-            SetRim(aimedItem, false);
-            SetRim(item, true);
             aimedItem = item;
+            item.SetHighlight(strength);
         }
 
         private void ClearAim()
         {
-            SetRim(aimedItem, false);
+            if (aimedItem != null)
+            {
+                aimedItem.SetHighlight(0f);
+            }
+
             aimedItem = null;
         }
 
-        private void SetRim(CarryableItem item, bool state)
+        /// <summary>
+        /// Full highlight up to highlightFullDistance, easing down to nothing
+        /// at the edge of grab range so far targets do not glow at full power.
+        /// </summary>
+        private float HighlightAtDistance(float distance)
         {
-            if (item == null || item.ItemRenderer == null)
+            if (grabRange <= highlightFullDistance)
             {
-                return;
+                return 1f;
             }
 
-            rimBlock ??= new MaterialPropertyBlock();
-            item.ItemRenderer.GetPropertyBlock(rimBlock);
-            rimBlock.SetFloat(RimStrengthId, state ? 1f : 0f);
-            item.ItemRenderer.SetPropertyBlock(rimBlock);
+            return 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(highlightFullDistance, grabRange, distance));
         }
 
         private void TryGrab()
@@ -369,7 +373,7 @@ namespace UnknownTechnology
         {
             item.Drop();
             // Phase changes also release items; keep pause and scene transitions silent.
-            if (Game.Phase == GamePhase.Exploring)
+            if (Game.Phase == GamePhase.Exploring && !SceneTransition.IsTransitioning)
             {
                 audioManager?.PlayScepterDropSound();
             }
