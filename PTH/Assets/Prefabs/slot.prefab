@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnknownTechnology.ItemSlot
   snapPoint: {fileID: 0}
   highlightRenderer: {fileID: 6748907756793117359}
-  highlightColor: {r: 0.25, g: 0.85, b: 1, a: 1}
+  highlightColor: {r: 0, g: 0.72156864, b: 0.06666667, a: 1}
   baseIntensity: 0.6
   nearIntensity: 1.8
   pulseSpeed: 3
