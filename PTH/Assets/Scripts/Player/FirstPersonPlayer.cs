@@ -41,18 +41,34 @@ namespace UnknownTechnology
 
         private void Update()
         {
+
             var input = Game.Runtime;
             if (input == null)
             {
                 return;
             }
 
-            var canControl = Game.Phase == GamePhase.Exploring;
+            var canControl = Game.Phase == GamePhase.Exploring && !CanvasQuizUI.IsQuizOpen;
+
             motor.Tick(input.Move, jumpRequested, canControl, Time.deltaTime);
             UpdateFootsteps(canControl);
             jumpRequested = false;
-            cameraController.Tick(input.Look, input.ControlScheme, Game.Settings, canControl, Time.deltaTime);
-            animationController.Tick(motor.NormalizedSpeed, input.ToolHeld, Game.Settings, Time.deltaTime);
+
+            cameraController.Tick(
+                input.Look,
+                input.ControlScheme,
+                Game.Settings,
+                canControl,
+                Time.deltaTime
+            );
+
+            animationController.Tick(
+                motor.NormalizedSpeed,
+                input.ToolHeld,
+                Game.Settings,
+                Time.deltaTime
+            );
+
             if (scepter != null)
             {
                 scepter.Tick(input.ToolHeld, canControl, Time.deltaTime);
