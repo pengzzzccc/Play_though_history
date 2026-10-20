@@ -514,6 +514,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2019119523976930394, guid: 1bf0601cccdfd514f89cd8f4248a3878, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4404350812587757292, guid: 1bf0601cccdfd514f89cd8f4248a3878, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -558,7 +562,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameRoot
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2019119523976930394, guid: 1bf0601cccdfd514f89cd8f4248a3878, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4404350812587757292, guid: 1bf0601cccdfd514f89cd8f4248a3878, type: 3}
@@ -602,6 +607,16 @@ MonoBehaviour:
   musicSource: {fileID: 1223962454}
   sfxSource: {fileID: 262871322}
   uiSource: {fileID: 1204529747}
+  footsteps:
+  - {fileID: 8300000, guid: af1a0040dbea2a94a9d2fa2068ff4076, type: 3}
+  - {fileID: 8300000, guid: 05dad655e15e056408c744efeb327a26, type: 3}
+  buttonClickSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
+  scepterPickupSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
+  scepterCarryLoop: {fileID: 0}
+  scepterDropSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
+  scepterPlaceSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
+  scepterVolume: 1
+  scepterCarryVolume: 0.4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,20 +1,39 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements">
-    <Style src="Main.uss" />
-    <ui:Template src="SettingPage.uxml" name="SettingPageTemplate" />
-    <!-- HUD renders first; the pause overlay is declared after it so it stacks on top. -->
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:Template name="SettingPageTemplate" src="project://database/Assets/UI/SettingPage.uxml?fileID=9197481963319205126&amp;guid=2e79d40fc07aa9c4fb1d154029eb4720&amp;type=3#SettingPage"/>
+    <Style src="project://database/Assets/UI/Main.uss?fileID=7433441132597879392&amp;guid=2a160949d25289348a54b06a1e3c773c&amp;type=3#Main"/>
     <ui:VisualElement name="hud" class="screen">
-        <ui:Label name="era-heading" class="hud-heading" />
-        <ui:Label name="controls-hint" text="WASD / Left Stick: Move   Mouse / Right Stick: Look   Esc / Start: Pause" class="hud-controls" />
-        <ui:Label name="crosshair" text="+" class="hud-crosshair" />
+        <ui:Label name="era-heading" class="hud-heading"/>
+        <ui:Label name="controls-hint" text="WASD / Left Stick: Move   Mouse / Right Stick: Look   Esc / Start: Pause" class="hud-controls"/>
+        <ui:Label name="crosshair" text="+" class="hud-crosshair"/>
     </ui:VisualElement>
     <ui:VisualElement name="pause-overlay" class="screen overlay hidden">
-        <ui:Label name="pause-title" text="PAUSED" class="pause-title" />
+        <ui:Label name="pause-title" text="PAUSED" class="pause-title"/>
         <ui:VisualElement name="pause-buttons" class="pause-buttons">
-            <ui:Button name="resume-button" text="Resume" class="menu-button" />
-            <ui:Button name="settings-button" text="Settings" class="menu-button" />
-            <ui:Button name="save-quit-button" text="Save &amp; Quit" class="menu-button" />
+            <ui:Button name="resume-button" text="Resume" class="menu-button"/>
+            <ui:Button name="settings-button" text="Settings" class="menu-button"/>
+            <ui:Button name="save-quit-button" text="Save &amp; Quit" class="menu-button"/>
         </ui:VisualElement>
-        <ui:Label name="device-message" picking-mode="Ignore" class="device-message" />
-        <ui:Instance template="SettingPageTemplate" name="settings" class="hidden" />
+        <ui:Label name="device-message" picking-mode="Ignore" class="device-message"/>
+        <ui:Instance template="SettingPageTemplate" name="settings" class="hidden"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="flashback-overlay" class="screen overlay flashback-overlay hidden">
+        <ui:VisualElement class="flashback-card">
+            <ui:VisualElement class="flashback-header">
+                <ui:Label text="ARTEFACT FLASHBACK" class="flashback-eyebrow"/>
+                <ui:Label name="flashback-counter" class="flashback-counter"/>
+                <ui:Button name="flashback-skip-button" text="Skip flashback" class="menu-button flashback-button flashback-skip-button"/>
+            </ui:VisualElement>
+            <ui:Label name="flashback-title" class="flashback-title"/>
+            <ui:VisualElement name="flashback-image" class="flashback-image"/>
+            <ui:VisualElement name="flashback-audio-placeholder" class="flashback-audio-placeholder">
+                <ui:Label text="LISTEN" class="flashback-listen"/>
+                <ui:Label text="Discover the story behind this artefact." class="flashback-description"/>
+            </ui:VisualElement>
+            <ui:Label name="flashback-narration-hint" class="flashback-hint"/>
+            <ui:VisualElement class="flashback-buttons">
+                <ui:Label text="Esc: Skip flashback" class="flashback-hint"/>
+                <ui:Button name="flashback-next-button" text="Next" class="menu-button flashback-button"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
