@@ -6,20 +6,28 @@ namespace UnknownTechnology
     /// <summary>
     /// Marks an object the sceptre can grab and carry. Keep a collider on the
     /// object so the grab raycast can hit it. The item owns its flight
-    /// animation into a slot (FlyTo); CurrentSlot tracks where it is seated
-    /// at runtime — placement itself is never restricted by a slot reference.
+    /// animation into a slot (FlyTo) and the fade of its aim highlight
+    /// (SetHighlight); CurrentSlot tracks where it is seated at runtime —
+    /// placement itself is never restricted by a slot reference.
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     public class CarryableItem : MonoBehaviour
     {
+        private static readonly int RimStrengthId = Shader.PropertyToID("_RimStrength");
+
         [SerializeField] private string itemId;
         [SerializeField] private float flightDuration = 0.35f;
         [SerializeField] private float flightArc = 0.25f;
+        [SerializeField] private float highlightFadeInDuration = 0.2f;
+        [SerializeField] private float highlightFadeOutDuration = 0.35f;
 
         private Rigidbody body;
         private Collider itemCollider;
         private Renderer itemRenderer;
         private Coroutine flightRoutine;
+        private MaterialPropertyBlock rimBlock;
+        private float highlight;
+        private float highlightTarget;
 
         public string ItemId => itemId;
         public Rigidbody Body => body;
@@ -34,6 +42,43 @@ namespace UnknownTechnology
             body = GetComponent<Rigidbody>();
             itemCollider = GetComponentInChildren<Collider>();
             itemRenderer = GetComponentInChildren<Renderer>();
+        }
+
+        /// <summary>
+        /// Sets the aim-highlight level (0 = off, 1 = full). The rim and glow
+        /// fade towards it over time instead of switching instantly.
+        /// </summary>
+        public void SetHighlight(float target)
+        {
+            highlightTarget = Mathf.Clamp01(target);
+        }
+
+        private void Update()
+        {
+            if (highlight == highlightTarget)
+            {
+                return;
+            }
+
+            var duration = highlightTarget > highlight ? highlightFadeInDuration : highlightFadeOutDuration;
+            highlight = duration > 0f
+                ? Mathf.MoveTowards(highlight, highlightTarget, Time.deltaTime / duration)
+                : highlightTarget;
+            ApplyHighlight();
+        }
+
+        private void ApplyHighlight()
+        {
+            if (itemRenderer == null)
+            {
+                return;
+            }
+
+            // Read-modify-write so the slot's _FlashAmount on the same block survives.
+            rimBlock ??= new MaterialPropertyBlock();
+            itemRenderer.GetPropertyBlock(rimBlock);
+            rimBlock.SetFloat(RimStrengthId, Mathf.SmoothStep(0f, 1f, highlight));
+            itemRenderer.SetPropertyBlock(rimBlock);
         }
 
         public void Grab()
