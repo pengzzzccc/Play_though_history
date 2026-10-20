@@ -244,17 +244,14 @@
 .flashback-overlay {
     align-items: center;
     justify-content: center;
-    background-color: rgba(5, 8, 10, 0.98);
+    background-color: rgb(0, 0, 0);
 }
 
 .flashback-card {
-    width: 96%;
-    height: 96%;
-    padding: 12px 16px;
-    background-color: var(--color-settings-panel);
-    border-width: 1px;
-    border-color: rgba(240, 245, 247, 0.2);
-    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+    padding: 8px 10px;
+    background-color: transparent;
 }
 
 .flashback-header {
@@ -263,11 +260,7 @@
     flex-shrink: 0;
 }
 
-.flashback-eyebrow {
-    flex-grow: 1;
-}
-
-.flashback-eyebrow, .flashback-counter {
+.flashback-counter {
     color: rgb(171, 207, 218);
     font-size: 12px;
     -unity-text-align: middle-left;
@@ -278,19 +271,22 @@
 }
 
 .flashback-title {
-    margin-top: 4px;
-    margin-bottom: 10px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 0 12px 0 0;
     color: var(--color-text);
-    font-size: 24px;
+    font-size: 18px;
     white-space: normal;
-    -unity-text-align: middle-center;
+    -unity-text-align: middle-left;
 }
 
 .flashback-image, .flashback-audio-placeholder {
     flex-grow: 1;
+    flex-basis: 0;
     min-height: 60px;
-    background-color: rgba(255, 255, 255, 0.035);
-    border-radius: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background-color: transparent;
 }
 
 .flashback-image {
@@ -317,8 +313,13 @@
 }
 
 .flashback-hint {
-    margin-top: 6px;
-    margin-bottom: 6px;
+    margin: 2px 12px 2px 0;
+}
+
+.flashback-narration-hint {
+    flex-grow: 1;
+    flex-shrink: 1;
+    -unity-text-align: middle-left;
 }
 
 .flashback-buttons {

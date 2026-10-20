@@ -19,18 +19,17 @@
     <ui:VisualElement name="flashback-overlay" class="screen overlay flashback-overlay hidden">
         <ui:VisualElement class="flashback-card">
             <ui:VisualElement class="flashback-header">
-                <ui:Label text="ARTEFACT FLASHBACK" class="flashback-eyebrow"/>
+                <ui:Label name="flashback-title" class="flashback-title"/>
                 <ui:Label name="flashback-counter" class="flashback-counter"/>
                 <ui:Button name="flashback-skip-button" text="Skip flashback" class="menu-button flashback-button flashback-skip-button"/>
             </ui:VisualElement>
-            <ui:Label name="flashback-title" class="flashback-title"/>
             <ui:VisualElement name="flashback-image" class="flashback-image"/>
             <ui:VisualElement name="flashback-audio-placeholder" class="flashback-audio-placeholder">
                 <ui:Label text="LISTEN" class="flashback-listen"/>
                 <ui:Label text="Discover the story behind this artefact." class="flashback-description"/>
             </ui:VisualElement>
-            <ui:Label name="flashback-narration-hint" class="flashback-hint"/>
             <ui:VisualElement class="flashback-buttons">
+                <ui:Label name="flashback-narration-hint" class="flashback-hint flashback-narration-hint"/>
                 <ui:Label text="Esc: Skip flashback" class="flashback-hint"/>
                 <ui:Button name="flashback-next-button" text="Next" class="menu-button flashback-button"/>
             </ui:VisualElement>

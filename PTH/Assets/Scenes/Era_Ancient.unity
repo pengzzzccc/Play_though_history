@@ -1863,19 +1863,19 @@ MonoBehaviour:
   slides:
   - title: Flashback - Part 1
     narration: {fileID: 8300000, guid: d31e086f3676c28488b9b23ec1cdbeb2, type: 3}
-    image: {fileID: 0}
+    image: {fileID: 2800000, guid: 68732cd531e135d4fbd87d3c9596cb13, type: 3}
   - title: Flashback - Part 2
     narration: {fileID: 8300000, guid: 51c793d745d26ec4a9f0e25ece207ae6, type: 3}
-    image: {fileID: 0}
+    image: {fileID: 2800000, guid: c969e4afd35a3b843a6867e4cee4b425, type: 3}
   - title: Flashback - Part 3
     narration: {fileID: 8300000, guid: c8bfd0ec260c5214d80b5bd5945e7826, type: 3}
-    image: {fileID: 0}
+    image: {fileID: 2800000, guid: 8a22d138d0cbfb643a2c23de1d8554c0, type: 3}
   - title: Flashback - Part 4
     narration: {fileID: 8300000, guid: 1db9aa3e6883a0a4fb3e94da1b43fb91, type: 3}
-    image: {fileID: 0}
+    image: {fileID: 2800000, guid: 3b2820fc8f4896644b41758b4e4a0963, type: 3}
   - title: Flashback - Part 5
     narration: {fileID: 8300000, guid: 68e05f5b805c6584da90e902e19b2534, type: 3}
-    image: {fileID: 0}
+    image: {fileID: 2800000, guid: 74b1c0963f9c3d54d83e0005387c0aa7, type: 3}
 --- !u!1001 &1543224147
 PrefabInstance:
   m_ObjectHideFlags: 0
