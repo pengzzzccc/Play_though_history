@@ -369,7 +369,7 @@ namespace UnknownTechnology
         {
             item.Drop();
             // Phase changes also release items; keep pause and scene transitions silent.
-            if (Game.Phase == GamePhase.Exploring)
+            if (Game.Phase == GamePhase.Exploring && !SceneTransition.IsTransitioning)
             {
                 audioManager?.PlayScepterDropSound();
             }

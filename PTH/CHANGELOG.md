@@ -35,6 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   instance in the open scene.
 - Enabled Bloom on the default volume (intensity 0 → 0.25) so emissive slot
   highlights read as a glow.
+- Level transition trigger prefab: `LevelTransition` is an invisible trigger
+  volume created as a prefab under `Assets/Prefabs`; drag a `.unity` scene into
+  its Target Scene field and walking into it fades the screen out, loads the
+  target scene, respawns the player at that scene's `PlayerSpawn` and fades
+  back in. `SceneTransition`/`ScreenFade` own the persistent overlay and reject
+  invalid targets (missing scene, scene not in Build Settings, repeated
+  triggers) without leaving the player stuck on a black screen.
 
 ## [0.0.1] - 2026-09-10
 
