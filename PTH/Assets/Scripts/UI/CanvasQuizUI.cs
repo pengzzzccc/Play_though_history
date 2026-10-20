@@ -56,8 +56,7 @@ namespace UnknownTechnology
             IsQuizOpen = true;
 
             // Hide the HUD without disabling its pause-menu bindings.
-            if (eraUIObject != null)
-                eraUIObject.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
+            SetEraUIVisible(false);
 
             // Show the Canvas quiz.
             if (completionPanel != null)
@@ -82,8 +81,7 @@ namespace UnknownTechnology
             IsQuizOpen = false;
 
             // Restore the HUD.
-            if (eraUIObject != null)
-                eraUIObject.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.Flex;
+            SetEraUIVisible(true);
 
             // Restore the cursor state from before the quiz opened.
             if (Game.Runtime == null || Game.Phase == GamePhase.Exploring)
@@ -91,6 +89,18 @@ namespace UnknownTechnology
                 Cursor.lockState = previousCursorLockState;
                 Cursor.visible = previousCursorVisible;
             }
+        }
+
+        private void SetEraUIVisible(bool visible)
+        {
+            // The UI document can already be torn down during a scene change or
+            // script reload, before this component receives OnDisable.
+            var root = eraUIObject != null
+                ? eraUIObject.GetComponent<UIDocument>()?.rootVisualElement
+                : null;
+
+            if (root != null)
+                root.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         private void OnDisable()
