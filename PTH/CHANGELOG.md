@@ -42,6 +42,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   back in. `SceneTransition`/`ScreenFade` own the persistent overlay and reject
   invalid targets (missing scene, scene not in Build Settings, repeated
   triggers) without leaving the player stuck on a black screen.
+- Sceptre beam: while an item is carried, a `ScepterBeam` component (Player
+  root) draws a LineRenderer from the sceptre tip to the item's bounds centre
+  with the new additive `Custom/ScepterBeam` shader (`Materials/ScepterBeam.mat`):
+  white core, cyan glow, pulses running towards the item and two
+  counter-phase filaments, HDR for bloom. The line itself follows a travelling
+  sine wave pinned at both ends. It fades in on grab and fades out on release,
+  following the item into its slot. Reduced Motion flattens the wave and stops
+  the pulses.
+
+### Changed
+
+- Aim highlight fades instead of switching: `CarryableItem.SetHighlight`
+  eases `_RimStrength` in (0.2 s) and out (0.35 s), and `Scepter` scales the
+  target by distance — full up to `highlightFullDistance` (4 m), easing to
+  nothing at the edge of grab range (the Player prefab uses 10 m).
+
+- `Custom/CarryableRim` aim highlight now reads as an edge glow instead of a
+  lit surface: a thin fresnel edge (`_RimPower` 6) that shifts to white at the
+  silhouette and outputs HDR for bloom (`_RimIntensity`, `_RimCoreWhite`), plus
+  an additive halo hull pushed out in world units that fades outwards
+  (`_OutlineWidth`, `_GlowIntensity`, `_GlowFalloff`). The base texture stays
+  untouched. `_UseCenterNormals` drives both from object-centre directions so
+  hard-edged convex meshes (the fragment cubes) get a smooth gradient and a
+  closed hull instead of whole lit faces and torn corners. The passes are
+  tagged `UniversalForward` / `SRPDefaultUnlit` and the shader renders at
+  `Transparent-10` so the depth-less halo is never painted over by later
+  geometry or the skybox. Property names used by `Scepter` and `ItemSlot` are
+  unchanged.
 
 ## [0.0.1] - 2026-09-10
 
