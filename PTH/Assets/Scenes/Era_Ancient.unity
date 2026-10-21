@@ -1523,7 +1523,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 810000022, guid: e5e6b8e83d5b4b3f927ba70a035da9c8, type: 3}
       propertyPath: m_fontSize
-      value: 15.3
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 810000034, guid: e5e6b8e83d5b4b3f927ba70a035da9c8, type: 3}
+      propertyPath: m_fontSize
+      value: 23.8
       objectReference: {fileID: 0}
     - target: {fileID: 810000036, guid: e5e6b8e83d5b4b3f927ba70a035da9c8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1676,8 +1680,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dd8f15428cf41e8b91dcbe7684bf50e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnknownTechnology.ExhibitionGuidance
-  puzzle: {fileID: 740000004}
-  quizUI: {fileID: 2019000030}
 --- !u!1 &759479094
 GameObject:
   m_ObjectHideFlags: 0
