@@ -17,6 +17,7 @@ namespace UnknownTechnology
         public static event Action<CarryableItem> CarryableGrabbed;
         public static event Action<CarryableItem> CarryablePlaced;
         public static event Action<CarryableItem> CarryableVacated;
+        public static event Action<ArtefactSlideshow> FlashbackFinishedOrSkipped;
 
         public static void RaisePhaseChanged(GamePhase phase) => PhaseChanged?.Invoke(phase);
         public static void RaiseCancelPressed() => CancelPressed?.Invoke();
@@ -26,6 +27,7 @@ namespace UnknownTechnology
         public static void RaiseCarryableGrabbed(CarryableItem item) => CarryableGrabbed?.Invoke(item);
         public static void RaiseCarryablePlaced(CarryableItem item) => CarryablePlaced?.Invoke(item);
         public static void RaiseCarryableVacated(CarryableItem item) => CarryableVacated?.Invoke(item);
+        public static void RaiseFlashbackFinishedOrSkipped(ArtefactSlideshow slideshow) => FlashbackFinishedOrSkipped?.Invoke(slideshow);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetOnPlay()
@@ -38,6 +40,7 @@ namespace UnknownTechnology
             CarryableGrabbed = null;
             CarryablePlaced = null;
             CarryableVacated = null;
+            FlashbackFinishedOrSkipped = null;
         }
     }
 }

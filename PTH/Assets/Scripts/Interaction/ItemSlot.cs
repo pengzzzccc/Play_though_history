@@ -37,6 +37,8 @@ namespace UnknownTechnology
 
         public bool Filled { get; private set; }
         public CarryableItem OccupiedItem { get; private set; }
+        public string RequiredItemId => requiredItemId;
+        public System.Func<CarryableItem, bool> PlacementValidator { get; set; }
 
         public Vector3 SnapPosition => snapPoint != null ? snapPoint.position : transform.position;
 
@@ -111,6 +113,9 @@ namespace UnknownTechnology
             {
                 return true;
             }
+
+            if (PlacementValidator != null && !PlacementValidator(item))
+                return false;
 
             // A different occupant gets kicked out before the new one seats.
             if (Filled && OccupiedItem != null)
