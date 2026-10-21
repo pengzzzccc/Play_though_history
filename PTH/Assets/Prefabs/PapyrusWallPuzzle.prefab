@@ -854,7 +854,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "A tall reed called papyrus grew in thick marshes along the banks of the <link=\"gap-0\"><nobr><color=#00000000>Nile</color></nobr></link>. Around <link=\"gap-1\"><nobr><color=#00000000>3000 BCE</color></nobr></link>, Egyptian craftspeople learned to slice the soft inner reed into thin strips.\n\nThey laid the strips in <link=\"gap-2\"><nobr><color=#00000000>two crossed layers</color></nobr></link>, then pressed and dried them until the plant's own sap bound them into a single sheet.\n\nSheets were glued end to end to make <link=\"gap-3\"><nobr><color=#00000000>long scrolls</color></nobr></link>, which scribes wrote on with reed pens and ink made from soot."
+  m_text: "A tall reed called papyrus grew in thick marshes along the banks of the <link=\"gap-0\"><nobr><color=#00000000>Nile</color></nobr></link>. Around <link=\"gap-1\"><nobr><color=#00000000>3000 BCE</color></nobr></link>, Egyptian craftspeople learned to slice the soft inner reed into thin strips.\n\n<nobr>They laid the strips in <link=\"gap-2\"><color=#00000000>two crossed layers</color></link></nobr>, then pressed and dried them until the plant's own sap bound them into a single sheet.\n\nSheets were glued end to end to make <link=\"gap-3\"><nobr><color=#00000000>long scrolls</color></nobr></link>, which scribes wrote on with reed pens and ink made from soot."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6154,11 +6154,8 @@ MonoBehaviour:
   feedbackText: {fileID: 810000250}
   progressText: {fileID: 810000254}
   paragraphText: {fileID: 810000034}
-  wrongAnswerHints:
-  - Papyrus grew beside the Nile in Egypt. The Amazon is in South America.
-  - Choose 3000 BCE. Papyrus making began long before 1600 AD.
-  - Two crossed layers formed the sheet, rather than one thin layer.
-  - The sheets were joined into long scrolls, rather than bound into books.
+  correctAnswerSound: {fileID: 8300000, guid: cd51c274f35199349a8a70da6d03c72a, type: 3}
+  incorrectAnswerSound: {fileID: 8300000, guid: e9403469a875db14d9e31bdfad434427, type: 3}
   correctColour: {r: 0.59, g: 0.78, b: 0.48, a: 1}
   incorrectColour: {r: 0.93, g: 0.48, b: 0.40, a: 1}
 --- !u!1 &810000300

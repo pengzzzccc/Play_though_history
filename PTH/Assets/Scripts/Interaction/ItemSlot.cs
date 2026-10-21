@@ -39,6 +39,7 @@ namespace UnknownTechnology
         public CarryableItem OccupiedItem { get; private set; }
         public string RequiredItemId => requiredItemId;
         public System.Func<CarryableItem, bool> PlacementValidator { get; set; }
+        public bool AutoCheckPlacement { get; set; } = true;
 
         public Vector3 SnapPosition => snapPoint != null ? snapPoint.position : transform.position;
 
@@ -128,7 +129,7 @@ namespace UnknownTechnology
             item.transform.SetPositionAndRotation(SnapPosition + placeOffset, SnapRotation);
             item.Place(this);
             EndHighlight();
-            if (!string.IsNullOrEmpty(requiredItemId) && item.ItemId == requiredItemId)
+            if (AutoCheckPlacement && !string.IsNullOrEmpty(requiredItemId) && item.ItemId == requiredItemId)
             {
                 StartFlash(item);
             }

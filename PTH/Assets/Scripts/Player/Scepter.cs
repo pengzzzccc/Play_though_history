@@ -40,6 +40,7 @@ namespace UnknownTechnology
 
         public bool IsCarrying => carried != null;
         public CarryableItem Carried => carried;
+        public ItemSlot PlacementTarget => carried != null ? aimedSlot ?? nearSlot : null;
 
         private void Awake()
         {

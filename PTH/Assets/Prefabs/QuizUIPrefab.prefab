@@ -263,6 +263,7 @@ MonoBehaviour:
   quizPanel: {fileID: 5820863131035782588}
   completionPanel: {fileID: 7250000000000001000}
   eraUIObject: {fileID: 0}
+  requiredPuzzle: {fileID: 0}
 --- !u!1 &1850769988743428984
 GameObject:
   m_ObjectHideFlags: 0

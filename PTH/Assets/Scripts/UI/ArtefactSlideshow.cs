@@ -150,6 +150,8 @@ namespace UnknownTechnology
                 ? $"Flashback - Part {currentSlide + 1}" : slide.title;
             slideCounter.text = $"PART {currentSlide + 1} OF {slides.Length}";
             nextButton.text = currentSlide == slides.Length - 1 ? "Finish" : "Next";
+            nextButton.SetEnabled(true);
+            skipButton.text = "Skip flashback";
             narrationHint.text = narrationSource.clip != null
                 ? $"Listen to the narration, then choose {nextButton.text} when ready."
                 : "No narration available for this part.";

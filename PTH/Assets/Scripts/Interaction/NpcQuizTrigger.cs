@@ -11,7 +11,7 @@ namespace UnknownTechnology
 
         private readonly HashSet<Collider> playerColliders = new HashSet<Collider>();
 
-        private bool CanInteract => quizUI != null && playerColliders.Count > 0 &&
+        private bool CanInteract => quizUI != null && quizUI.CanInteractWithJimmy && playerColliders.Count > 0 &&
             Game.Phase == GamePhase.Exploring && !CanvasQuizUI.IsQuizOpen;
 
         private void Reset()
@@ -36,14 +36,14 @@ namespace UnknownTechnology
         private void Update()
         {
             if (CanInteract && Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame)
-                quizUI.OpenQuiz();
+                quizUI.InteractWithJimmy();
         }
 
         private void OnGUI()
         {
             if (CanInteract)
                 GUI.Box(new Rect((Screen.width - 280f) / 2f, Screen.height - 90f, 280f, 40f),
-                    "Press T to start the quiz");
+                    quizUI.HasSeenIntroduction ? "Press T to start the quiz" : "Press T to talk to Jimmy");
         }
 
         private void OnDisable()
