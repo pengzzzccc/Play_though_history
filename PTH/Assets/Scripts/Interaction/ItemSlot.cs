@@ -37,6 +37,7 @@ namespace UnknownTechnology
 
         public bool Filled { get; private set; }
         public CarryableItem OccupiedItem { get; private set; }
+        public string SaveId { get; private set; }
 
         public Vector3 SnapPosition => snapPoint != null ? snapPoint.position : transform.position;
 
@@ -46,6 +47,7 @@ namespace UnknownTechnology
 
         private void Awake()
         {
+            SaveId = SaveIds.FromHierarchy(transform);
             if (snapPoint == null)
             {
                 snapPoint = transform;
@@ -123,7 +125,7 @@ namespace UnknownTechnology
             item.transform.SetPositionAndRotation(SnapPosition + placeOffset, SnapRotation);
             item.Place(this);
             EndHighlight();
-            if (!string.IsNullOrEmpty(requiredItemId) && item.ItemId == requiredItemId)
+            if (!SaveSystem.IsRestoring && !string.IsNullOrEmpty(requiredItemId) && item.ItemId == requiredItemId)
             {
                 StartFlash(item);
             }

@@ -30,6 +30,7 @@ namespace UnknownTechnology
         private float highlightTarget;
 
         public string ItemId => itemId;
+        public string SaveId { get; private set; }
         public Rigidbody Body => body;
         public Collider ItemCollider => itemCollider;
         public Renderer ItemRenderer => itemRenderer;
@@ -42,6 +43,24 @@ namespace UnknownTechnology
             body = GetComponent<Rigidbody>();
             itemCollider = GetComponentInChildren<Collider>();
             itemRenderer = GetComponentInChildren<Renderer>();
+            SaveId = SaveIds.FromHierarchy(transform);
+        }
+
+        public void RestoreFree(Vector3 position, Quaternion rotation)
+        {
+            if (flightRoutine != null)
+            {
+                StopCoroutine(flightRoutine);
+                flightRoutine = null;
+            }
+
+            IsFlying = false;
+            IsCarried = false;
+            CurrentSlot = null;
+            transform.SetPositionAndRotation(position, rotation);
+            body.isKinematic = false;
+            body.linearVelocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
         }
 
         /// <summary>

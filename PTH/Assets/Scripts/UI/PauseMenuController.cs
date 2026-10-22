@@ -168,6 +168,7 @@ namespace UnknownTechnology
         private void SaveAndQuit()
         {
             PlayClickSound();
+            SaveSystem.SaveNow();
             Game.LoadScene("MainMenu", GamePhase.MainMenu);
         }
 

@@ -148,7 +148,7 @@ namespace UnknownTechnology.Audio
 
         private void HandleCarryablePlaced(CarryableItem item)
         {
-            if (Game.Phase == GamePhase.Exploring)
+            if (Game.Phase == GamePhase.Exploring && !SaveSystem.IsRestoring)
             {
                 PlaySFX(scepterPlaceSound, scepterVolume);
             }

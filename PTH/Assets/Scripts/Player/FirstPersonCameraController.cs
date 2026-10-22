@@ -13,6 +13,15 @@ namespace UnknownTechnology
 
         public float Pitch => pitch;
 
+        public void SetPitch(float value)
+        {
+            pitch = Mathf.Clamp(value, minimumPitch, maximumPitch);
+            if (pitchPivot != null)
+            {
+                pitchPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+            }
+        }
+
         public void Tick(Vector2 lookInput, ControlScheme controlScheme, GameSettings settings, bool canLook, float deltaTime)
         {
             if (!canLook || playerRoot == null || pitchPivot == null)

@@ -94,6 +94,19 @@ namespace UnknownTechnology
             }
         }
 
+        public float CameraPitch => cameraController != null ? cameraController.Pitch : 0f;
+
+        public void ApplySavedPose(Vector3 position, float yaw, float pitch)
+        {
+            Teleport(position, Quaternion.Euler(0f, yaw, 0f));
+            if (cameraController != null)
+            {
+                cameraController.SetPitch(pitch);
+            }
+
+            motor.StopImmediately();
+        }
+
         private void PlaceAtSpawn()
         {
             var spawn = GameObject.Find("PlayerSpawn");
@@ -102,13 +115,19 @@ namespace UnknownTechnology
                 return;
             }
 
+            Teleport(spawn.transform.position, spawn.transform.rotation);
+        }
+
+        private void Teleport(Vector3 position, Quaternion rotation)
+        {
+            // CharacterController overrides transform writes while enabled.
             var controller = GetComponent<CharacterController>();
             if (controller != null)
             {
                 controller.enabled = false;
             }
 
-            transform.SetPositionAndRotation(spawn.transform.position, spawn.transform.rotation);
+            transform.SetPositionAndRotation(position, rotation);
             if (controller != null)
             {
                 controller.enabled = true;
