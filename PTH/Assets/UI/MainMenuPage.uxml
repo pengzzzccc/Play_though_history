@@ -1,23 +1,23 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements">
-    <Style src="Main.uss" />
-    <ui:Template src="SettingPage.uxml" name="SettingPageTemplate" />
-    <ui:VisualElement name="menu-panel" class="screen screen-background">
-        <ui:Label name="title" text="UNKNOWN TECHNOLOGY" class="menu-title" />
-        <ui:Label name="status-label" text="Investigate the missing technology relics." class="menu-status" />
-        <ui:VisualElement name="menu-buttons" class="menu-buttons">
-            <ui:Button name="play-button" text="Play" class="menu-button" />
-            <ui:Button name="settings-button" text="Settings" class="menu-button" />
-            <ui:Button name="quit-button" text="Quit" class="menu-button" />
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:Template name="SettingPageTemplate" src="project://database/Assets/UI/SettingPage.uxml?fileID=9197481963319205126&amp;guid=2e79d40fc07aa9c4fb1d154029eb4720&amp;type=3#SettingPage"/>
+    <Style src="project://database/Assets/UI/Main.uss?fileID=7433441132597879392&amp;guid=2a160949d25289348a54b06a1e3c773c&amp;type=3#Main"/>
+    <ui:VisualElement name="menu-panel" class="screen screen-background" style="background-image: url(&quot;project://database/Assets/UI/Images/MAINBG.png?fileID=2800000&amp;guid=f1086364902c9154eaa9b095d0ee81af&amp;type=3#MAINBG&quot;); left: -19px; -unity-background-image-tint-color: rgb(197, 197, 197);">
+        <ui:Label name="title" text="UNKNOWN &#10;TECHNOLOGY" class="menu-title" style="margin-top: 170px; margin-right: 168px; margin-bottom: 21px; margin-left: -3px; -unity-text-align: middle-left;"/>
+        <ui:Label name="status-label" text="Investigate the missing technology relics." class="menu-status" style="margin-top: 15px; margin-right: 520px; margin-bottom: 0; margin-left: 0; width: 452px; height: 40px; white-space: nowrap; -unity-text-align: middle-left;"/>
+        <ui:VisualElement name="menu-buttons" class="menu-buttons" style="flex-direction: column; align-self: flex-start; margin-top: 27px; margin-left: 30px;">
+            <ui:Button name="play-button" text="Play" class="menu-button"/>
+            <ui:Button name="settings-button" text="Settings" class="menu-button"/>
+            <ui:Button name="quit-button" text="Quit" class="menu-button"/>
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="play-panel" class="screen screen-background hidden">
-        <ui:Label name="play-title" text="SELECT SAVE SLOT" class="menu-title" />
-        <ui:VisualElement name="menu-buttons" class="menu-buttons">
-            <ui:Button name="slot-1-button" text="Slot 1 — Empty" class="menu-button" />
-            <ui:Button name="slot-2-button" text="Slot 2 — Empty" class="menu-button" />
-            <ui:Button name="slot-3-button" text="Slot 3 — Empty" class="menu-button" />
-            <ui:Button name="play-back-button" text="Back" class="menu-button" />
+        <ui:Label name="play-title" text="SELECT SAVE SLOT" class="menu-title" style="margin-top: 35px;"/>
+        <ui:VisualElement name="menu-buttons" class="menu-buttons" style="margin-top: 40px; flex-direction: row;">
+            <ui:Button name="slot-1-button" text="Slot 1 — Empty" class="menu-button" style="height: 250px;"/>
+            <ui:Button name="slot-2-button" text="Slot 2 — Empty" class="menu-button" style="height: 250px;"/>
+            <ui:Button name="slot-3-button" text="Slot 3 — Empty" class="menu-button" style="height: 250px;"/>
         </ui:VisualElement>
+        <ui:Button name="play-back-button" text="Back" class="menu-button" style="margin-top: 30px; margin-bottom: 55px; margin-left: 655px;"/>
     </ui:VisualElement>
-    <ui:Instance template="SettingPageTemplate" name="settings" class="screen screen-background hidden" />
+    <ui:Instance template="SettingPageTemplate" name="settings" class="screen screen-background hidden"/>
 </ui:UXML>

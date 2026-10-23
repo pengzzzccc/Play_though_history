@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8790254074534648562}
   - component: {fileID: 606242188897559553}
   - component: {fileID: 6344785360318462916}
+  - component: {fileID: 3498517093776250499}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -150,6 +151,28 @@ MonoBehaviour:
   snapRadius: 1.1
   aimRingColor: {r: 0.25, g: 0.85, b: 1, a: 1}
   aimRingShader: {fileID: 0}
+--- !u!114 &3498517093776250499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682346082243987175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52157ce342794fa691a12fcd443591ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnknownTechnology.ScepterBeam
+  sceptre: {fileID: 8058784597816055348}
+  tipLocalOffset: {x: 0, y: 1, z: 0}
+  beamMaterial: {fileID: 2100000, guid: 228f2cf2f63948a9933580595c5868ee, type: 2}
+  segments: 40
+  width: 0.06
+  waveAmplitude: 0.05
+  waveLength: 0.7
+  waveSpeed: 2.5
+  fadeInDuration: 0.15
+  fadeOutDuration: 0.3
 --- !u!1 &1094429300654439946
 GameObject:
   m_ObjectHideFlags: 0

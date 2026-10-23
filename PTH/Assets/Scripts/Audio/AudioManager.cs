@@ -45,7 +45,6 @@ namespace UnknownTechnology.Audio
 
         private void Awake()
         {
-            ApplySettings(Game.Settings);
             Game.Settings.Changed += ApplySettings;
         }
 
@@ -89,12 +88,8 @@ namespace UnknownTechnology.Audio
             musicSource.clip = testMusic;
             musicSource.Play();
         }
-        public void PlaySFX(AudioClip clip)
-        {
-            PlaySFX(clip, 1f);
-        }
 
-        private void PlaySFX(AudioClip clip, float volumeScale)
+        private void PlaySFX(AudioClip clip, float volumeScale = 1f)
         {
             if (clip == null || sfxSource == null || !isActiveAndEnabled)
             {
@@ -188,13 +183,9 @@ namespace UnknownTechnology.Audio
             PlaySFX(footsteps[index]);
         }
 
-        public void Start()
+        private void Start()
         {
-            if (testMusic != null)
-            {
-                ApplySettings(Game.Settings);
-                PlayMainMenuMusic();
-            }
+            ApplySettings(Game.Settings);
         }
 
         private void ApplySettings(GameSettings settings)

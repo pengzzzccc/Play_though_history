@@ -41,18 +41,34 @@ namespace UnknownTechnology
 
         private void Update()
         {
+
             var input = Game.Runtime;
             if (input == null)
             {
                 return;
             }
 
-            var canControl = Game.Phase == GamePhase.Exploring;
+            var canControl = Game.Phase == GamePhase.Exploring && !CanvasQuizUI.IsQuizOpen && !SceneTransition.IsTransitioning;
+
             motor.Tick(input.Move, jumpRequested, canControl, Time.deltaTime);
             UpdateFootsteps(canControl);
             jumpRequested = false;
-            cameraController.Tick(input.Look, input.ControlScheme, Game.Settings, canControl, Time.deltaTime);
-            animationController.Tick(motor.NormalizedSpeed, input.ToolHeld, Game.Settings, Time.deltaTime);
+
+            cameraController.Tick(
+                input.Look,
+                input.ControlScheme,
+                Game.Settings,
+                canControl,
+                Time.deltaTime
+            );
+
+            animationController.Tick(
+                motor.NormalizedSpeed,
+                input.ToolHeld,
+                Game.Settings,
+                Time.deltaTime
+            );
+
             if (scepter != null)
             {
                 scepter.Tick(input.ToolHeld, canControl, Time.deltaTime);
@@ -106,7 +122,10 @@ namespace UnknownTechnology
 
         private void ApplyCursor(GamePhase phase)
         {
-            var locked = phase == GamePhase.Exploring;
+            // Keep the cursor locked while a level transition is fading in/out;
+            // a normal menu-driven load still unlocks it as before.
+            var locked = phase == GamePhase.Exploring ||
+                (phase == GamePhase.Loading && SceneTransition.IsTransitioning);
             Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !locked;
             if (!locked)
