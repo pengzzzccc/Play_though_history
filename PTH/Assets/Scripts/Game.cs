@@ -114,6 +114,8 @@ namespace UnknownTechnology
                 return;
             }
 
+            SaveSystem.CaptureActiveScene();
+
             if (!SetPhase(GamePhase.Loading))
             {
                 return;

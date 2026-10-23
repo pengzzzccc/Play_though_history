@@ -40,6 +40,7 @@ namespace UnknownTechnology
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            gameObject.AddComponent<SaveRuntime>();
 
             playerInput = GetComponent<PlayerInput>();
             moveAction = playerInput.actions.FindAction("Gameplay/Move", true);

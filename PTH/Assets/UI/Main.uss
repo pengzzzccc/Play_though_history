@@ -80,6 +80,21 @@
     opacity: 0.45;
 }
 
+/* ---- Save slots ---- */
+
+.slot-column {
+    align-items: center;
+}
+
+.slot-delete {
+    height: 44px;
+    font-size: 18px;
+}
+
+.slot-delete--confirm {
+    border-color: var(--color-focus);
+}
+
 /* ---- Era HUD ---- */
 
 .hud-heading {

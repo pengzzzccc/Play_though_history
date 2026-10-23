@@ -1,6 +1,25 @@
 # Changelog
 
 
+## [Unreleased]
+
+### Added
+
+- Save system: three JSON save slots in `Saves/slot_{1,2,3}.json` beside the
+  game (next to `Assets/` in the editor, next to the executable in builds;
+  browser storage on WebGL). A slot stores the current scene, the player's
+  position, yaw and camera pitch, play time, and per-era-scene state: every
+  carryable's pose and the slot it sits in, and every trigger gate's pose.
+  Objects are keyed by their hierarchy path (`SaveIds`), not by puzzle
+  `itemId`. Scene state is captured whenever a scene is left and re-applied
+  one frame after it loads (gates first, then items through their slots,
+  without flash or sound), so revisiting an era keeps it as it was. Writes are
+  atomic (temp file + replace); Save & Quit and entering an era scene save
+  automatically. The main menu shows each slot's era, save time and play time,
+  continues filled slots, starts new games in empty ones and deletes a slot
+  after a second confirming press; unreadable saves are set aside as
+  `slot_{n}.corrupt.json`.
+
 ## [0.0.1] - 2026-09-10
 
 First tagged version: a playable greybox vertical slice with the final
