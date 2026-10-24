@@ -23,10 +23,24 @@ namespace UnknownTechnology
         private Quaternion startRotation;
         private Coroutine moveRoutine;
 
+        public string SaveId { get; private set; }
+
         private void Awake()
         {
             startPosition = transform.position;
             startRotation = transform.rotation;
+            SaveId = SaveIds.FromHierarchy(transform);
+        }
+
+        public void RestorePose(Vector3 position, Quaternion rotation)
+        {
+            if (moveRoutine != null)
+            {
+                StopCoroutine(moveRoutine);
+                moveRoutine = null;
+            }
+
+            transform.SetPositionAndRotation(position, rotation);
         }
 
         private void Start()

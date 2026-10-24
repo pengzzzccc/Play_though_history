@@ -3,8 +3,8 @@
 
 :root {
     --color-menu-bg: rgb(9, 14, 19);
-    --color-button: rgba(31, 122, 128, 0.95);
-    --color-button-hover: rgb(44, 146, 153);
+    --color-button: rgba(33, 72, 111, 0.42);
+    --color-button-hover: rgba(80, 237, 255, 0.33);
     --color-pause-overlay: rgba(5, 8, 10, 0.9);
     --color-settings-panel: rgba(20, 28, 36, 0.98);
     --color-text: rgb(235, 240, 242);
@@ -78,6 +78,21 @@
 
 .menu-button:disabled {
     opacity: 0.45;
+}
+
+/* ---- Save slots ---- */
+
+.slot-column {
+    align-items: center;
+}
+
+.slot-delete {
+    height: 44px;
+    font-size: 18px;
+}
+
+.slot-delete--confirm {
+    border-color: var(--color-focus);
 }
 
 /* ---- Era HUD ---- */
@@ -237,4 +252,109 @@
     align-self: center;
     margin-top: 8px;
     margin-bottom: 0;
+}
+
+/* ---- Artefact flashback ---- */
+
+.flashback-overlay {
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(0, 0, 0);
+}
+
+.flashback-card {
+    width: 100%;
+    height: 100%;
+    padding: 8px 10px;
+    background-color: transparent;
+}
+
+.flashback-header {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.flashback-counter {
+    color: rgb(171, 207, 218);
+    font-size: 12px;
+    -unity-text-align: middle-left;
+}
+
+.flashback-counter {
+    margin-right: 16px;
+}
+
+.flashback-title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 0 12px 0 0;
+    color: var(--color-text);
+    font-size: 18px;
+    white-space: normal;
+    -unity-text-align: middle-left;
+}
+
+.flashback-image, .flashback-audio-placeholder {
+    flex-grow: 1;
+    flex-basis: 0;
+    min-height: 60px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background-color: transparent;
+}
+
+.flashback-image {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.flashback-audio-placeholder {
+    align-items: center;
+    justify-content: center;
+}
+
+.flashback-listen {
+    color: var(--color-text);
+    font-size: 32px;
+}
+
+.flashback-description, .flashback-hint {
+    color: rgb(190, 202, 209);
+    font-size: 13px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+.flashback-hint {
+    margin: 2px 12px 2px 0;
+}
+
+.flashback-narration-hint {
+    flex-grow: 1;
+    flex-shrink: 1;
+    -unity-text-align: middle-left;
+}
+
+.flashback-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.flashback-button {
+    width: 100px;
+    height: 34px;
+    margin: 0;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.flashback-skip-button {
+    width: 120px;
+    height: 28px;
+    font-size: 13px;
+    background-color: rgba(255, 255, 255, 0.06);
 }

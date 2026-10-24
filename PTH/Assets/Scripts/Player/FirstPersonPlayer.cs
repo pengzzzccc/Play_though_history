@@ -41,18 +41,34 @@ namespace UnknownTechnology
 
         private void Update()
         {
+
             var input = Game.Runtime;
             if (input == null)
             {
                 return;
             }
 
-            var canControl = Game.Phase == GamePhase.Exploring;
+            var canControl = Game.Phase == GamePhase.Exploring && !CanvasQuizUI.IsQuizOpen && !SceneTransition.IsTransitioning;
+
             motor.Tick(input.Move, jumpRequested, canControl, Time.deltaTime);
             UpdateFootsteps(canControl);
             jumpRequested = false;
-            cameraController.Tick(input.Look, input.ControlScheme, Game.Settings, canControl, Time.deltaTime);
-            animationController.Tick(motor.NormalizedSpeed, input.ToolHeld, Game.Settings, Time.deltaTime);
+
+            cameraController.Tick(
+                input.Look,
+                input.ControlScheme,
+                Game.Settings,
+                canControl,
+                Time.deltaTime
+            );
+
+            animationController.Tick(
+                motor.NormalizedSpeed,
+                input.ToolHeld,
+                Game.Settings,
+                Time.deltaTime
+            );
+
             if (scepter != null)
             {
                 scepter.Tick(input.ToolHeld, canControl, Time.deltaTime);
@@ -69,13 +85,26 @@ namespace UnknownTechnology
                 return;
             }
 
-            footstepTimer += Time.deltaTime;
+            footstepTimer -= Time.deltaTime;
 
-            if (footstepTimer >= footstepInterval)
+            if (footstepTimer <= 0f)
             {
                 audioManager?.PlayFootstepSound();
-                footstepTimer = 0f;
+                footstepTimer = footstepInterval;
             }
+        }
+
+        public float CameraPitch => cameraController != null ? cameraController.Pitch : 0f;
+
+        public void ApplySavedPose(Vector3 position, float yaw, float pitch)
+        {
+            Teleport(position, Quaternion.Euler(0f, yaw, 0f));
+            if (cameraController != null)
+            {
+                cameraController.SetPitch(pitch);
+            }
+
+            motor.StopImmediately();
         }
 
         private void PlaceAtSpawn()
@@ -86,13 +115,19 @@ namespace UnknownTechnology
                 return;
             }
 
+            Teleport(spawn.transform.position, spawn.transform.rotation);
+        }
+
+        private void Teleport(Vector3 position, Quaternion rotation)
+        {
+            // CharacterController overrides transform writes while enabled.
             var controller = GetComponent<CharacterController>();
             if (controller != null)
             {
                 controller.enabled = false;
             }
 
-            transform.SetPositionAndRotation(spawn.transform.position, spawn.transform.rotation);
+            transform.SetPositionAndRotation(position, rotation);
             if (controller != null)
             {
                 controller.enabled = true;
@@ -106,7 +141,10 @@ namespace UnknownTechnology
 
         private void ApplyCursor(GamePhase phase)
         {
-            var locked = phase == GamePhase.Exploring;
+            // Keep the cursor locked while a level transition is fading in/out;
+            // a normal menu-driven load still unlocks it as before.
+            var locked = phase == GamePhase.Exploring ||
+                (phase == GamePhase.Loading && SceneTransition.IsTransitioning);
             Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !locked;
             if (!locked)

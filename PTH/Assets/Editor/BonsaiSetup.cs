@@ -69,7 +69,6 @@ namespace UnknownTechnology
             message += spawned != null
                 ? $" and placed at {SpawnPosition} in '{scene.name}'."
                 : ". Open an Era scene and run the menu again to place an instance.";
-            message += " Wire its CarryableItem target slot in the inspector if it should snap into a slot.";
             Debug.Log(message);
         }
 

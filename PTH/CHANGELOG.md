@@ -1,40 +1,24 @@
 # Changelog
 
-All notable changes to this project are documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ### Added
 
-- Sceptre grab-and-carry: holding the tool button grabs the nearest carryable
-  within range (the one under the crosshair takes priority, seated ones
-  included) and pulls it in front of the camera (kinematic follow, colliders
-  ignored against the player); pointing the sceptre at a grabbable lights its
-  edges — a tight fresnel plus an inverted-hull silhouette outline, both
-  driven by the per-renderer `_RimStrength` (`Custom/CarryableRim` shader now
-  also samples base, occlusion and roughness maps). While the hand is full
-  every slot glows, the aimed one brightens, and releasing then makes the
-  item fly into it — the flight animation is owned by the carryable itself
-  (`FlyTo`, no slot reference on items). Items carry an optional id; a slot
-  with a matching required id flashes the placed item gold (shader
-  `_FlashAmount`, ~0.6 s decay), otherwise nothing changes. Slots are
-  idempotent, hold one item, eject the previous occupant upward when a new
-  one arrives. Slots pulse an emissive highlight
-  while their item is carried, brightening near the snap point (steady glow
-  under Reduced Motion). New `Scepter` (Player root), `CarryableItem` and
-  `ItemSlot` (Interaction) components, `CarryableGrabbed`/`CarryablePlaced`
-  events; manual scene wiring guide in
-  `Documentation/02_TechnicalDesign/Modules/Scepter.md`.
-- Bonsai exhibit prop: `Assets/Model` import cleanup (roughness/AO imported as
-  linear data maps, embedded material remapped to `tree.mat`) and a one-shot
-  Unknown Technology → Setup Bonsai Grabbable menu that builds a grabbable
-  prefab (convex MeshCollider + Rigidbody + CarryableItem) and places an
-  instance in the open scene.
-- Enabled Bloom on the default volume (intensity 0 → 0.25) so emissive slot
-  highlights read as a glow.
+- Save system: three JSON save slots in `Saves/slot_{1,2,3}.json` beside the
+  game (next to `Assets/` in the editor, next to the executable in builds;
+  browser storage on WebGL). A slot stores the current scene, the player's
+  position, yaw and camera pitch, play time, and per-era-scene state: every
+  carryable's pose and the slot it sits in, and every trigger gate's pose.
+  Objects are keyed by their hierarchy path (`SaveIds`), not by puzzle
+  `itemId`. Scene state is captured whenever a scene is left and re-applied
+  one frame after it loads (gates first, then items through their slots,
+  without flash or sound), so revisiting an era keeps it as it was. Writes are
+  atomic (temp file + replace); Save & Quit and entering an era scene save
+  automatically. The main menu shows each slot's era, save time and play time,
+  continues filled slots, starts new games in empty ones and deletes a slot
+  after a second confirming press; unreadable saves are set aside as
+  `slot_{n}.corrupt.json`.
 
 ## [0.0.1] - 2026-09-10
 

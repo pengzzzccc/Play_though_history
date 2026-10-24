@@ -7,9 +7,9 @@ namespace UnknownTechnology
     /// The target position of a carryable item. While its item is carried the
     /// slot pulses an emissive highlight (brighter once the item is close to
     /// the snap point); releasing the item inside the sceptre's snap radius
-    /// places it here. Placing is idempotent, validates the item id against
-    /// requiredItemId (empty accepts anything) and ejects the previous
-    /// occupant when a different item takes the slot.
+    /// places it here. Placing is idempotent, flashes when the item id matches
+    /// requiredItemId and ejects the previous occupant when a different item
+    /// takes the slot.
     /// </summary>
     public class ItemSlot : MonoBehaviour
     {
@@ -37,6 +37,7 @@ namespace UnknownTechnology
 
         public bool Filled { get; private set; }
         public CarryableItem OccupiedItem { get; private set; }
+        public string SaveId { get; private set; }
 
         public Vector3 SnapPosition => snapPoint != null ? snapPoint.position : transform.position;
 
@@ -46,6 +47,7 @@ namespace UnknownTechnology
 
         private void Awake()
         {
+            SaveId = SaveIds.FromHierarchy(transform);
             if (snapPoint == null)
             {
                 snapPoint = transform;
@@ -123,7 +125,7 @@ namespace UnknownTechnology
             item.transform.SetPositionAndRotation(SnapPosition + placeOffset, SnapRotation);
             item.Place(this);
             EndHighlight();
-            if (!string.IsNullOrEmpty(requiredItemId) && item.ItemId == requiredItemId)
+            if (!SaveSystem.IsRestoring && !string.IsNullOrEmpty(requiredItemId) && item.ItemId == requiredItemId)
             {
                 StartFlash(item);
             }
