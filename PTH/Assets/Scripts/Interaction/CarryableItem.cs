@@ -28,6 +28,9 @@ namespace UnknownTechnology
         private MaterialPropertyBlock rimBlock;
         private float highlight;
         private float highlightTarget;
+        private bool defaultUseGravity;
+        private CollisionDetectionMode defaultCollisionMode;
+        private RigidbodyInterpolation defaultInterpolation;
 
         public string ItemId => itemId;
         public string SaveId { get; private set; }
@@ -44,6 +47,20 @@ namespace UnknownTechnology
             itemCollider = GetComponentInChildren<Collider>();
             itemRenderer = GetComponentInChildren<Renderer>();
             SaveId = SaveIds.FromHierarchy(transform);
+            defaultUseGravity = body.useGravity;
+            defaultCollisionMode = body.collisionDetectionMode;
+            defaultInterpolation = body.interpolation;
+        }
+
+        /// <summary>
+        /// While carried the item is a dynamic body without gravity, so walls
+        /// stop it; otherwise its authored physics settings apply.
+        /// </summary>
+        private void SetCarryPhysics(bool carrying)
+        {
+            body.useGravity = carrying ? false : defaultUseGravity;
+            body.collisionDetectionMode = carrying ? CollisionDetectionMode.ContinuousDynamic : defaultCollisionMode;
+            body.interpolation = carrying ? RigidbodyInterpolation.Interpolate : defaultInterpolation;
         }
 
         public void RestoreFree(Vector3 position, Quaternion rotation)
@@ -59,6 +76,7 @@ namespace UnknownTechnology
             CurrentSlot = null;
             transform.SetPositionAndRotation(position, rotation);
             body.isKinematic = false;
+            SetCarryPhysics(false);
             body.linearVelocity = Vector3.zero;
             body.angularVelocity = Vector3.zero;
         }
@@ -103,19 +121,22 @@ namespace UnknownTechnology
         public void Grab()
         {
             IsCarried = true;
-            body.isKinematic = true;
+            body.isKinematic = false;
+            SetCarryPhysics(true);
         }
 
         public void Drop()
         {
             IsCarried = false;
             body.isKinematic = false;
+            SetCarryPhysics(false);
         }
 
         public void Place(ItemSlot slot)
         {
             IsCarried = false;
             CurrentSlot = slot;
+            SetCarryPhysics(false);
             body.isKinematic = true;
             GameEvents.RaiseCarryablePlaced(this);
         }
@@ -138,11 +159,13 @@ namespace UnknownTechnology
             IsCarried = false;
             CurrentSlot = null;
             body.isKinematic = false;
+            SetCarryPhysics(false);
         }
 
         /// <summary>
         /// Flies the item into the slot along an arc, then places it. Finishes
-        /// instantly when the game leaves the exploring phase.
+        /// instantly when the game leaves the exploring phase; anything solid
+        /// in the way stops the flight and the item drops.
         /// </summary>
         public void FlyTo(ItemSlot slot)
         {
@@ -155,6 +178,15 @@ namespace UnknownTechnology
             {
                 StopCoroutine(flightRoutine);
             }
+
+            if (!body.isKinematic)
+            {
+                body.linearVelocity = Vector3.zero;
+                body.angularVelocity = Vector3.zero;
+            }
+
+            body.isKinematic = true;
+            SetCarryPhysics(false);
 
             flightRoutine = StartCoroutine(FlightRoutine(slot));
         }
@@ -176,8 +208,17 @@ namespace UnknownTechnology
 
                 var t = Mathf.Clamp01(time / flightDuration);
                 var eased = t * t * (3f - 2f * t);
-                transform.position = Vector3.Lerp(startPosition, slot.SnapPosition + slot.PlaceOffset, eased)
+                var next = Vector3.Lerp(startPosition, slot.SnapPosition + slot.PlaceOffset, eased)
                     + Vector3.up * (Mathf.Sin(t * Mathf.PI) * flightArc);
+                if (Game.Phase == GamePhase.Exploring && IsFlightBlocked(next, slot))
+                {
+                    IsFlying = false;
+                    flightRoutine = null;
+                    Drop();
+                    yield break;
+                }
+
+                transform.position = next;
                 transform.rotation = Quaternion.Slerp(startRotation, slot.SnapRotation, eased);
                 yield return null;
             }
@@ -188,6 +229,26 @@ namespace UnknownTechnology
             {
                 Drop();
             }
+        }
+
+        private bool IsFlightBlocked(Vector3 next, ItemSlot slot)
+        {
+            var step = next - transform.position;
+            var distance = step.magnitude;
+            if (distance < 0.0001f)
+            {
+                return false;
+            }
+
+            foreach (var hit in body.SweepTestAll(step / distance, distance, QueryTriggerInteraction.Ignore))
+            {
+                if (CarryPhysics.IsBlocking(hit, this, slot))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -26,6 +26,8 @@ namespace UnknownTechnology
         [SerializeField] private float rotationLerpSpeed = 6f;
         [SerializeField] private float snapRadius = 1.1f;
         [SerializeField] private float highlightFullDistance = 4f;
+        [SerializeField] private float maxCarrySpeed = 20f;
+        [SerializeField] private float connectionBreakDelay = 0.1f;
 
         private static readonly RaycastHit[] AimHits = new RaycastHit[16];
         private static readonly Collider[] NearbyColliders = new Collider[16];
@@ -35,15 +37,17 @@ namespace UnknownTechnology
         private ItemSlot aimedSlot;
         private ItemSlot nearSlot;
         private readonly List<ItemSlot> carryingHighlights = new List<ItemSlot>();
-        private CharacterController playerBody;
+        private Collider[] playerColliders;
         private AudioManager audioManager;
+        private bool waitForToolRelease;
+        private float blockedTime;
 
         public bool IsCarrying => carried != null;
         public CarryableItem Carried => carried;
 
         private void Awake()
         {
-            playerBody = GetComponent<CharacterController>();
+            playerColliders = GetComponentsInChildren<Collider>(true);
         }
 
         private void Start()
@@ -89,11 +93,28 @@ namespace UnknownTechnology
                 }
                 else
                 {
-                    MoveCarried(deltaTime);
-                    UpdateCarriedAim();
+                    // A brief obstruction is tolerated; a lasting one breaks
+                    // the link and the item falls.
+                    blockedTime = IsConnectionBlocked(carried) ? blockedTime + deltaTime : 0f;
+                    if (blockedTime > connectionBreakDelay)
+                    {
+                        Release(true);
+                    }
+                    else
+                    {
+                        MoveCarried(deltaTime);
+                        UpdateCarriedAim();
+                    }
                 }
 
                 return;
+            }
+
+            // After any release the tool must be let go before it grabs again,
+            // so a dropped item is not re-grabbed every frame.
+            if (!toolHeld)
+            {
+                waitForToolRelease = false;
             }
 
             if (!canControl)
@@ -103,7 +124,7 @@ namespace UnknownTechnology
             }
 
             UpdateAim();
-            if (toolHeld)
+            if (toolHeld && !waitForToolRelease)
             {
                 TryGrab();
             }
@@ -178,19 +199,17 @@ namespace UnknownTechnology
             // Anything in range works, seated items included; the target under
             // the crosshair wins.
             var item = aimedItem != null ? aimedItem : FindNearestInRange(cam.transform.position);
-            if (item == null)
+            if (item == null || IsConnectionBlocked(item))
             {
                 return;
             }
 
             carried = item;
+            blockedTime = 0f;
             ClearAim();
             item.Grab();
             item.CurrentSlot?.Vacate(item);
-            if (playerBody != null && item.ItemCollider != null)
-            {
-                Physics.IgnoreCollision(playerBody, item.ItemCollider, true);
-            }
+            IgnorePlayerCollision(item, true);
 
             // While the hand is full every slot glows as a placement hint.
             carryingHighlights.Clear();
@@ -219,11 +238,14 @@ namespace UnknownTechnology
                 }
 
                 var sqrDistance = (item.transform.position - center).sqrMagnitude;
-                if (sqrDistance < nearestSqrDistance)
+                if (sqrDistance >= nearestSqrDistance || IsConnectionBlocked(item))
                 {
-                    nearestSqrDistance = sqrDistance;
-                    nearest = item;
+                    // Items behind walls cannot be grabbed.
+                    continue;
                 }
+
+                nearestSqrDistance = sqrDistance;
+                nearest = item;
             }
 
             return nearest;
@@ -237,16 +259,51 @@ namespace UnknownTechnology
                 return;
             }
 
+            // Driven through the rigidbody so walls and other solids stop it.
             var camTransform = cam.transform;
-            var itemTransform = carried.transform;
+            var body = carried.Body;
             var holdPoint = camTransform.position
                 + camTransform.forward * holdDistance
                 + camTransform.right * holdSideOffset;
-            itemTransform.position = Vector3.Lerp(itemTransform.position, holdPoint, deltaTime * positionLerpSpeed);
-            itemTransform.rotation = Quaternion.Slerp(
-                itemTransform.rotation,
+            body.linearVelocity = Vector3.ClampMagnitude((holdPoint - body.position) * positionLerpSpeed, maxCarrySpeed);
+            body.angularVelocity = Vector3.zero;
+            body.MoveRotation(Quaternion.Slerp(
+                body.rotation,
                 Quaternion.LookRotation(camTransform.forward, camTransform.up),
-                deltaTime * rotationLerpSpeed);
+                deltaTime * rotationLerpSpeed));
+        }
+
+        /// <summary>
+        /// True when something solid sits between the camera and the item.
+        /// </summary>
+        private bool IsConnectionBlocked(CarryableItem item)
+        {
+            var cam = viewCamera != null ? viewCamera : Camera.main;
+            if (cam == null)
+            {
+                return false;
+            }
+
+            var origin = cam.transform.position;
+            var target = item.ItemRenderer != null ? item.ItemRenderer.bounds.center : item.transform.position;
+            var toTarget = target - origin;
+            var distance = toTarget.magnitude;
+            if (distance < 0.0001f)
+            {
+                return false;
+            }
+
+            var count = Physics.RaycastNonAlloc(
+                origin, toTarget / distance, AimHits, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            for (var index = 0; index < count; index++)
+            {
+                if (CarryPhysics.IsBlocking(AimHits[index], item, null))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -332,7 +389,7 @@ namespace UnknownTechnology
             return nearest;
         }
 
-        private void Release()
+        private void Release(bool dropOnly = false)
         {
             audioManager?.StopScepterCarrySound();
             var item = carried;
@@ -342,9 +399,11 @@ namespace UnknownTechnology
                 return;
             }
 
+            waitForToolRelease = true;
+
             // Capture the aimed slot before the feedback cleanup clears it.
-            var remoteSlot = aimedSlot;
-            var snapSlot = nearSlot;
+            var remoteSlot = dropOnly ? null : aimedSlot;
+            var snapSlot = dropOnly ? null : nearSlot;
             ClearCarryFeedback();
 
             if (remoteSlot != null)
@@ -363,9 +422,22 @@ namespace UnknownTechnology
                 DropItem(item);
             }
 
-            if (playerBody != null && item.ItemCollider != null)
+            IgnorePlayerCollision(item, false);
+        }
+
+        private void IgnorePlayerCollision(CarryableItem item, bool ignore)
+        {
+            if (item.ItemCollider == null)
             {
-                Physics.IgnoreCollision(playerBody, item.ItemCollider, false);
+                return;
+            }
+
+            foreach (var playerCollider in playerColliders)
+            {
+                if (playerCollider != null)
+                {
+                    Physics.IgnoreCollision(playerCollider, item.ItemCollider, ignore);
+                }
             }
         }
 
