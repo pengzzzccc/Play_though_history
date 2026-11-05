@@ -37,6 +37,9 @@ namespace UnknownTechnology
 
         public bool Filled { get; private set; }
         public CarryableItem OccupiedItem { get; private set; }
+        public string RequiredItemId => requiredItemId;
+        public System.Func<CarryableItem, bool> PlacementValidator { get; set; }
+        public bool AutoCheckPlacement { get; set; } = true;
         public string SaveId { get; private set; }
 
         public Vector3 SnapPosition => snapPoint != null ? snapPoint.position : transform.position;
@@ -114,6 +117,9 @@ namespace UnknownTechnology
                 return true;
             }
 
+            if (PlacementValidator != null && !PlacementValidator(item))
+                return false;
+
             // A different occupant gets kicked out before the new one seats.
             if (Filled && OccupiedItem != null)
             {
@@ -125,7 +131,7 @@ namespace UnknownTechnology
             item.transform.SetPositionAndRotation(SnapPosition + placeOffset, SnapRotation);
             item.Place(this);
             EndHighlight();
-            if (!SaveSystem.IsRestoring && !string.IsNullOrEmpty(requiredItemId) && item.ItemId == requiredItemId)
+            if (AutoCheckPlacement && !SaveSystem.IsRestoring && !string.IsNullOrEmpty(requiredItemId) && item.ItemId == requiredItemId)
             {
                 StartFlash(item);
             }

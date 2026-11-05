@@ -30,6 +30,9 @@
   slot itself does not count). If anything comes between the camera and the
   carried item, the connection breaks and the item drops instead of flying or
   snapping into a slot. The shared rule lives in `CarryPhysics.IsBlocking`.
+- Restored ItemSlot placement validation hooks lost in the UI merge
+  (`RequiredItemId`, `PlacementValidator`, `AutoCheckPlacement`), which the
+  papyrus wall puzzle depends on.
 
 ## [0.0.1] - 2026-09-10
 
