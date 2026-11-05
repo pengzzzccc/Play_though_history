@@ -612,7 +612,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 05dad655e15e056408c744efeb327a26, type: 3}
   buttonClickSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
   scepterPickupSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
-  scepterCarryLoop: {fileID: 0}
+  scepterCarryLoop: {fileID: 8300000, guid: 6c3bca39389d6f84f92dfb0fc0ac9fac, type: 3}
   scepterDropSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
   scepterPlaceSound: {fileID: 8300000, guid: 5575fbe90133fb8488d4c0b7080ca82f, type: 3}
   scepterVolume: 1

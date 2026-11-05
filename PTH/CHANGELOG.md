@@ -20,6 +20,17 @@
   after a second confirming press; unreadable saves are set aside as
   `slot_{n}.corrupt.json`.
 
+### Fixed
+
+- Sceptre items no longer pass through walls. A carried item is now a dynamic
+  rigidbody without gravity (continuous collision, interpolated) pushed towards
+  the hold point by velocity, so solid geometry stops it; collisions with all
+  player colliders are ignored while carrying. An item flying into a slot
+  sweeps each step and drops where something solid is in the way (the target
+  slot itself does not count). If anything comes between the camera and the
+  carried item, the connection breaks and the item drops instead of flying or
+  snapping into a slot. The shared rule lives in `CarryPhysics.IsBlocking`.
+
 ## [0.0.1] - 2026-09-10
 
 First tagged version: a playable greybox vertical slice with the final

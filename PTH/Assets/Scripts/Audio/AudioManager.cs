@@ -29,8 +29,11 @@ namespace UnknownTechnology.Audio
         [SerializeField] private AudioClip scepterPlaceSound;
         [SerializeField, Range(0f, 1f)] private float scepterVolume = 1f;
         [SerializeField, Range(0f, 1f)] private float scepterCarryVolume = 0.4f;
+        [SerializeField, Min(0f)] private float scepterCarryFadeIn = 0.25f;
+        [SerializeField, Min(0f)] private float scepterCarryFadeOut = 0.4f;
 
         private AudioSource scepterCarrySource;
+        private float scepterCarryTarget;
 
         private void OnEnable()
         {
@@ -40,7 +43,31 @@ namespace UnknownTechnology.Audio
         private void OnDisable()
         {
             GameEvents.CarryablePlaced -= HandleCarryablePlaced;
-            StopScepterCarrySound();
+            // Update no longer runs to finish a fade, so cut the hum outright.
+            scepterCarryTarget = 0f;
+            if (scepterCarrySource != null)
+            {
+                scepterCarrySource.Stop();
+            }
+        }
+
+        private void Update()
+        {
+            if (scepterCarrySource == null || !scepterCarrySource.isPlaying)
+            {
+                return;
+            }
+
+            var rising = scepterCarryTarget > scepterCarrySource.volume;
+            var fade = rising ? scepterCarryFadeIn : scepterCarryFadeOut;
+            scepterCarrySource.volume = fade > 0f
+                ? Mathf.MoveTowards(scepterCarrySource.volume, scepterCarryTarget, scepterCarryVolume * Time.unscaledDeltaTime / fade)
+                : scepterCarryTarget;
+
+            if (scepterCarryTarget <= 0f && scepterCarrySource.volume <= 0f)
+            {
+                scepterCarrySource.Stop();
+            }
         }
 
         private void Awake()
@@ -127,23 +154,23 @@ namespace UnknownTechnology.Audio
                 scepterCarrySource.spatialBlend = 0f;
             }
 
+            // Fades in from silence; a grab during a fade-out just fades back up.
+            scepterCarryTarget = scepterCarryVolume;
             if (scepterCarrySource.isPlaying)
             {
                 return;
             }
 
             scepterCarrySource.outputAudioMixerGroup = sfxSource.outputAudioMixerGroup;
-            scepterCarrySource.volume = scepterCarryVolume;
+            scepterCarrySource.volume = 0f;
             scepterCarrySource.clip = scepterCarryLoop;
             scepterCarrySource.Play();
         }
 
         public void StopScepterCarrySound()
         {
-            if (scepterCarrySource != null && scepterCarrySource.isPlaying)
-            {
-                scepterCarrySource.Stop();
-            }
+            // Fades out in Update and stops once silent.
+            scepterCarryTarget = 0f;
         }
 
         private void HandleCarryablePlaced(CarryableItem item)
