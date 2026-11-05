@@ -2,8 +2,8 @@
     <ui:Template name="SettingPageTemplate" src="project://database/Assets/UI/SettingPage.uxml?fileID=9197481963319205126&amp;guid=2e79d40fc07aa9c4fb1d154029eb4720&amp;type=3#SettingPage"/>
     <Style src="project://database/Assets/UI/Main.uss?fileID=7433441132597879392&amp;guid=2a160949d25289348a54b06a1e3c773c&amp;type=3#Main"/>
     <ui:VisualElement name="hud" class="screen">
-        <ui:Label name="era-heading" class="hud-heading"/>
-        <ui:Label name="controls-hint" text="WASD / Left Stick: Move   Mouse / Right Stick: Look   Esc / Start: Pause" class="hud-controls"/>
+        <ui:Label name="era-heading" class="hud-heading" style="color: rgba(235, 240, 242, 0);"/>
+        <ui:Label name="controls-hint" text="WASD / Left Stick: Move   Mouse / Right Stick: Look   Esc / Start: Pause" class="hud-controls" style="color: rgba(235, 240, 242, 0);"/>
         <ui:Label name="crosshair" text="+" class="hud-crosshair"/>
     </ui:VisualElement>
     <ui:VisualElement name="pause-overlay" class="screen overlay hidden">

@@ -1,15 +1,18 @@
-
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnknownTechnology;
 using UnknownTechnology.Audio;
+
 public class QuizManager : MonoBehaviour
 {
+    private const int MaximumChances = 3;
+
     [SerializeField] private AudioClip correctAnswerSound;
     [SerializeField] private AudioClip incorrectAnswerSound;
     private AudioManager audioManager;
-    [System.Serializable]
 
+    [System.Serializable]
     public class Question
     {
         [TextArea]
@@ -40,10 +43,10 @@ public class QuizManager : MonoBehaviour
 
     private Color[] originalColours;
 
-    private int currentQuestionIndex = 0;
-    private bool questionAnswered = false;
-
-
+    private int currentQuestionIndex;
+    private bool questionAnswered;
+    private int chancesUsed;
+    private TMP_Text chancesText;
 
     private void Start()
     {
@@ -51,25 +54,34 @@ public class QuizManager : MonoBehaviour
         if (completionPanel != null)
             completionPanel.SetActive(false);
 
-        // CanvasQuizUI controls when the quiz is visible.
-
-        // Connect each button to its answer index.
+        originalColours = new Color[answerButtons.Length];
         for (int i = 0; i < answerButtons.Length; i++)
         {
             int answerIndex = i;
-            answerButtons[i].onClick.AddListener(
-                () => CheckAnswer(answerIndex)
-            );
-        }
-
-        originalColours = new Color[answerButtons.Length];
-
-        for (int i = 0; i < answerButtons.Length; i++)
-        {
+            answerButtons[i].onClick.AddListener(() => CheckAnswer(answerIndex));
             originalColours[i] = answerButtons[i].image.color;
         }
 
+        CreateChancesText();
         DisplayQuestion();
+    }
+
+    private void CreateChancesText()
+    {
+        chancesText = RuntimeUI.CreateText("Quiz Chances", quizPanel.transform, feedbackText.font, 36, TextAlignmentOptions.Right);
+        chancesText.fontStyle = FontStyles.Bold;
+
+        RectTransform rect = chancesText.rectTransform;
+        rect.anchorMin = rect.anchorMax = new Vector2(1f, 0f);
+        rect.pivot = new Vector2(1f, 0f);
+        rect.anchoredPosition = new Vector2(-32f, 10f);
+        rect.sizeDelta = new Vector2(340f, 48f);
+    }
+
+    private void UpdateChancesText()
+    {
+        chancesText.text = $"{chancesUsed}/{MaximumChances} Chances";
+        chancesText.color = chancesUsed > 0 ? incorrectColour : feedbackText.color;
     }
 
     private void DisplayQuestion()
@@ -80,6 +92,7 @@ public class QuizManager : MonoBehaviour
 
         questionText.text = question.questionText;
         feedbackText.text = "";
+        UpdateChancesText();
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
@@ -95,54 +108,75 @@ public class QuizManager : MonoBehaviour
         if (questionAnswered)
             return;
 
-        Question question = questions[currentQuestionIndex];
+        bool correct = selectedAnswerIndex == questions[currentQuestionIndex].correctAnswerIndex;
+        audioManager?.PlayUI(correct ? correctAnswerSound : incorrectAnswerSound);
+        answerButtons[selectedAnswerIndex].image.color = correct ? correctColour : incorrectColour;
 
-        if (selectedAnswerIndex == question.correctAnswerIndex)
+        if (correct)
         {
-            questionAnswered = true;
             feedbackText.text = "Correct!";
-            audioManager?.PlayUI(correctAnswerSound);
-
-            answerButtons[selectedAnswerIndex].image.color = correctColour;
-
-            foreach (Button button in answerButtons)
-                button.interactable = false;
-
+            LockAnswers();
             Invoke(nameof(NextQuestion), 1f);
+            return;
         }
-        else
+
+        chancesUsed++;
+        UpdateChancesText();
+        if (chancesUsed < MaximumChances)
         {
             feedbackText.text = "Incorrect! Try again.";
-            audioManager?.PlayUI(incorrectAnswerSound);
-            answerButtons[selectedAnswerIndex].image.color = incorrectColour;
+            return;
         }
+
+        feedbackText.text = "Out of chances! Talk to Jimmy to try again.";
+        LockAnswers();
+        Invoke(nameof(EndFailedAttempt), 1.5f);
+    }
+
+    private void LockAnswers()
+    {
+        questionAnswered = true;
+        foreach (Button button in answerButtons)
+            button.interactable = false;
+    }
+
+    private void EndFailedAttempt()
+    {
+        FindAnyObjectByType<CanvasQuizUI>()?.CloseQuiz();
+        ResetQuiz();
+    }
+
+    private void ResetQuiz()
+    {
+        CancelInvoke();
+        currentQuestionIndex = 0;
+        chancesUsed = 0;
+        DisplayQuestion();
     }
 
     private void NextQuestion()
     {
         currentQuestionIndex++;
 
-        if (currentQuestionIndex >= questions.Length)
+        if (currentQuestionIndex < questions.Length)
         {
-            // All questions have been answered.
-            if (quizPanel != null)
-                quizPanel.SetActive(false);
-
-            if (completionPanel != null)
-            {
-                // Keep completion hidden if the player closed the quiz during answer feedback.
-                completionPanel.SetActive(UnknownTechnology.CanvasQuizUI.IsQuizOpen);
-                if (completionPanel.activeInHierarchy)
-                    completionPanel.GetComponentInChildren<Button>()?.Select();
-            }
-            else
-                FindAnyObjectByType<UnknownTechnology.CanvasQuizUI>()?.CloseQuiz();
-
-            currentQuestionIndex = 0;
             DisplayQuestion();
             return;
         }
 
-        DisplayQuestion();
+        if (quizPanel != null)
+            quizPanel.SetActive(false);
+
+        if (completionPanel != null)
+        {
+            // Closing during answer feedback must not reopen the completion panel.
+            completionPanel.SetActive(CanvasQuizUI.IsQuizOpen);
+            if (completionPanel.activeInHierarchy)
+                completionPanel.GetComponentInChildren<Button>()?.Select();
+        }
+        else
+            FindAnyObjectByType<CanvasQuizUI>()?.CloseQuiz();
+
+        ResetQuiz();
     }
 }

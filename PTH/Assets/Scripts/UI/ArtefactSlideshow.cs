@@ -52,7 +52,7 @@ namespace UnknownTechnology
         private void OnEnable()
         {
             Bind();
-            GameEvents.CancelPressed += Close;
+            GameEvents.CancelPressed += FinishOrSkip;
             GameEvents.PhaseChanged += HandlePhaseChanged;
         }
 
@@ -66,7 +66,7 @@ namespace UnknownTechnology
         {
             // The custom UI Cancel action uses Backspace; also support the quiz's Escape shortcut.
             if (IsOpen && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
-                Close();
+                FinishOrSkip();
         }
 
         private bool Bind()
@@ -95,7 +95,7 @@ namespace UnknownTechnology
 
             overlay.AddToClassList("hidden");
             nextButton.clicked += Next;
-            skipButton.clicked += Close;
+            skipButton.clicked += FinishOrSkip;
             bound = true;
             return true;
         }
@@ -130,7 +130,7 @@ namespace UnknownTechnology
 
             if (currentSlide >= slides.Length - 1)
             {
-                Close();
+                FinishOrSkip();
                 return;
             }
 
@@ -150,6 +150,8 @@ namespace UnknownTechnology
                 ? $"Flashback - Part {currentSlide + 1}" : slide.title;
             slideCounter.text = $"PART {currentSlide + 1} OF {slides.Length}";
             nextButton.text = currentSlide == slides.Length - 1 ? "Finish" : "Next";
+            nextButton.SetEnabled(true);
+            skipButton.text = "Skip flashback";
             narrationHint.text = narrationSource.clip != null
                 ? $"Listen to the narration, then choose {nextButton.text} when ready."
                 : "No narration available for this part.";
@@ -158,6 +160,14 @@ namespace UnknownTechnology
             slideImage.style.backgroundImage = new StyleBackground(texture);
             slideImage.style.display = texture != null ? DisplayStyle.Flex : DisplayStyle.None;
             audioPlaceholder.style.display = texture == null ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        private void FinishOrSkip()
+        {
+            if (!IsOpen)
+                return;
+            Close();
+            GameEvents.RaiseFlashbackFinishedOrSkipped(this);
         }
 
         public void Close()
@@ -184,12 +194,12 @@ namespace UnknownTechnology
         private void OnDisable()
         {
             Close();
-            GameEvents.CancelPressed -= Close;
+            GameEvents.CancelPressed -= FinishOrSkip;
             GameEvents.PhaseChanged -= HandlePhaseChanged;
             if (bound)
             {
                 nextButton.clicked -= Next;
-                skipButton.clicked -= Close;
+                skipButton.clicked -= FinishOrSkip;
                 bound = false;
             }
         }
