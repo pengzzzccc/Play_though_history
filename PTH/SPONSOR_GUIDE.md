@@ -170,17 +170,6 @@ Attachments: screenshot/video, log, and a copied save if relevant.
 
 For example: “After Continue in Slot 2, I approached the wall and pressed T. I expected the puzzle to start, but there was no prompt. It happened twice. I can walk around, but cannot continue the activity.”
 
-### Finding the Windows game log
-
-A log is a text file recording technical messages for the developer. You do not need to interpret it.
-
-1. After the problem, press **Windows + R**.
-2. Paste `%USERPROFILE%\AppData\LocalLow\DefaultCompany\PTH` and press Enter.
-3. If present, **copy** `Player.log` to a separate folder and attach that copy to the report. Do this before reopening the game, because logs can be replaced on the next launch.
-
-That is the usual location for the project's current application/company names. If the folder does not exist, send the report anyway; the delivered version may use a different name, and the developer can locate its log. A problem inside the Unity development editor uses a different log; the Developer Handover covers that.
-
-If a save is relevant, attach a **copy** of the affected `slot_n.json` or `.corrupt.json` from the `Saves` folder, keeping your own backup. Logs can contain computer file paths, so send them through the agreed support channel.
 
 ## 10. Keeping the project usable in the future
 
