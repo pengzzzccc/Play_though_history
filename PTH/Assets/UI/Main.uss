@@ -358,3 +358,100 @@
     font-size: 13px;
     background-color: rgba(255, 255, 255, 0.06);
 }
+
+/* ---- End Credits (film style) ---- */
+
+.credits-screen {
+    background-color: rgb(5, 7, 10);
+}
+
+.credits-viewport {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 58px;
+    left: 0;
+    overflow: hidden;
+    align-items: center;
+}
+
+.credits-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    align-items: center;
+    padding: 0 32px;
+}
+
+.credits-game-title {
+    margin-bottom: 72px;
+    font-size: 32px;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+}
+
+.credits-block {
+    align-items: center;
+    margin-bottom: 56px;
+}
+
+.credits-sponsor-block {
+    margin-top: 16px;
+    margin-bottom: 72px;
+}
+
+.credits-role {
+    margin-bottom: 6px;
+    font-size: 15px;
+    color: rgba(235, 240, 242, 0.78);
+    -unity-text-align: middle-center;
+}
+
+.credits-name {
+    margin-bottom: 4px;
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+}
+
+.credits-end-note {
+    margin-bottom: 32px;
+    font-size: 16px;
+    color: rgba(235, 240, 242, 0.72);
+    -unity-text-align: middle-center;
+}
+
+.credits-footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 58px;
+    padding: 0 24px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(5, 7, 10, 0.92);
+}
+
+.credits-hint {
+    font-size: 14px;
+    color: rgba(235, 240, 242, 0.7);
+    -unity-text-align: middle-left;
+}
+
+.credits-footer-buttons {
+    flex-direction: row;
+    align-items: center;
+}
+
+.credits-action-button {
+    width: 96px;
+    height: 36px;
+    margin: 0 0 0 10px;
+    font-size: 16px;
+}
+

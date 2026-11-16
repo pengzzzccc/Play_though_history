@@ -108,12 +108,29 @@ namespace UnknownTechnology.Audio
 
         public void PlayMainMenuMusic()
         {
-            if(testMusic == null)
+            if (testMusic == null || musicSource == null)
             {
                 return;
             }
             musicSource.clip = testMusic;
             musicSource.Play();
+        }
+
+        /// <summary>
+        /// Starts the main menu music only if it is not already playing, so
+        /// switching between MainMenu subpanels (like Credits) is seamless.
+        /// </summary>
+        public void EnsureMainMenuMusic()
+        {
+            if (testMusic == null || musicSource == null)
+            {
+                return;
+            }
+            if (musicSource.isPlaying && musicSource.clip == testMusic)
+            {
+                return;
+            }
+            PlayMainMenuMusic();
         }
 
         private void PlaySFX(AudioClip clip, float volumeScale = 1f)

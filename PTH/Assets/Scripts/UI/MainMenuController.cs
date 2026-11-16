@@ -19,11 +19,14 @@ namespace UnknownTechnology
         private const string StatusUnavailable = "Game services are unavailable.";
         private const long DeleteConfirmTimeoutMs = 3000;
 
+        private static bool openCreditsOnNextLoad;
+
         private AudioManager audioManager;
         private VisualElement menuPanel;
         private VisualElement playPanel;
         private Button playButton;
         private Button settingsButton;
+        private Button creditsButton;
         private Button quitButton;
         private Button playBackButton;
         private readonly Button[] slotButtons = new Button[SaveSystem.SlotCount];
@@ -31,9 +34,12 @@ namespace UnknownTechnology
         private readonly SaveData[] slotSaves = new SaveData[SaveSystem.SlotCount];
         private Label statusLabel;
         private SettingsPanelBinder settingsBinder;
+        private CreditsPanelBinder creditsBinder;
         private Action showPlayPanel;
         private Action showSettingsPanel;
+        private Action showCreditsPanel;
         private Action showMenuPanel;
+        private Action closeCreditsPanel;
         private readonly Action[] slotClickHandlers = new Action[SaveSystem.SlotCount];
         private readonly Action[] deleteClickHandlers = new Action[SaveSystem.SlotCount];
         private readonly EventCallback<FocusOutEvent>[] deleteFocusOutHandlers = new EventCallback<FocusOutEvent>[SaveSystem.SlotCount];
@@ -42,10 +48,33 @@ namespace UnknownTechnology
         private string currentPanel = "menu";
         private bool bound;
 
+        /// <summary>
+        /// Requests the main menu to open straight into the End Credits screen on
+        /// its next load (e.g. after completing the final era).
+        /// </summary>
+        public static void RequestCreditsOnLoad()
+        {
+            openCreditsOnNextLoad = true;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            openCreditsOnNextLoad = false;
+        }
+
         private void Start()
         {   
             Bind();
-            audioManager?.PlayMainMenuMusic();
+            audioManager?.EnsureMainMenuMusic();
+        }
+
+        private void Update()
+        {
+            if (bound && currentPanel == "credits")
+            {
+                creditsBinder?.Tick(Time.unscaledDeltaTime);
+            }
         }
 
         private void OnDisable()
@@ -71,6 +100,7 @@ namespace UnknownTechnology
             playPanel = root.Q<VisualElement>("play-panel");
             playButton = root.Q<Button>("play-button");
             settingsButton = root.Q<Button>("settings-button");
+            creditsButton = root.Q<Button>("credits-button");
             quitButton = root.Q<Button>("quit-button");
             playBackButton = root.Q<Button>("play-back-button");
             statusLabel = root.Q<Label>("status-label");
@@ -81,11 +111,14 @@ namespace UnknownTechnology
             }
 
             settingsBinder = new SettingsPanelBinder(root);
+            creditsBinder = new CreditsPanelBinder(root);
             audioManager = FindAnyObjectByType<AudioManager>();
 
             showPlayPanel = () => { PlayClickSound(); ShowPanel("play"); };
             showSettingsPanel = () => { PlayClickSound(); ShowPanel("settings"); };
+            showCreditsPanel = () => { PlayClickSound(); ShowPanel("credits"); };
             showMenuPanel = () => { PlayClickSound(); ShowPanel("menu"); };
+            closeCreditsPanel = () => ShowPanel("menu");
             for (var index = 0; index < slotButtons.Length; index++)
             {
                 var slot = index;
@@ -106,9 +139,14 @@ namespace UnknownTechnology
             bound = true;
             playButton.clicked += showPlayPanel;
             settingsButton.clicked += showSettingsPanel;
+            if (creditsButton != null)
+            {
+                creditsButton.clicked += showCreditsPanel;
+            }
             quitButton.clicked += QuitGame;
             playBackButton.clicked += showMenuPanel;
             settingsBinder.BackRequested += showMenuPanel;
+            creditsBinder.CloseRequested += closeCreditsPanel;
             for (var index = 0; index < slotButtons.Length; index++)
             {
                 slotButtons[index].clicked += slotClickHandlers[index];
@@ -119,7 +157,10 @@ namespace UnknownTechnology
             GameEvents.CancelPressed += HandleCancel;
             RefreshSlots();
             statusLabel.text = StatusReady;
-            ShowPanel("menu");
+
+            var initialPanel = openCreditsOnNextLoad ? "credits" : "menu";
+            openCreditsOnNextLoad = false;
+            ShowPanel(initialPanel);
         }
 
         private void Unbind()
@@ -131,9 +172,14 @@ namespace UnknownTechnology
 
             playButton.clicked -= showPlayPanel;
             settingsButton.clicked -= showSettingsPanel;
+            if (creditsButton != null)
+            {
+                creditsButton.clicked -= showCreditsPanel;
+            }
             quitButton.clicked -= QuitGame;
             playBackButton.clicked -= showMenuPanel;
             settingsBinder.BackRequested -= showMenuPanel;
+            creditsBinder.CloseRequested -= closeCreditsPanel;
             for (var index = 0; index < slotButtons.Length; index++)
             {
                 slotButtons[index].clicked -= slotClickHandlers[index];
@@ -144,6 +190,7 @@ namespace UnknownTechnology
             deleteConfirmTimeout?.Pause();
             GameEvents.CancelPressed -= HandleCancel;
             settingsBinder.Unbind();
+            creditsBinder.Unbind();
             bound = false;
         }
 
@@ -168,6 +215,7 @@ namespace UnknownTechnology
             menuPanel.EnableInClassList(HiddenClass, panel != "menu");
             playPanel.EnableInClassList(HiddenClass, panel != "play");
             settingsBinder.SetVisible(panel == "settings");
+            creditsBinder.SetVisible(panel == "credits");
 
             switch (panel)
             {
@@ -287,6 +335,7 @@ namespace UnknownTechnology
         {
             playButton.SetEnabled(value);
             settingsButton.SetEnabled(value);
+            creditsButton?.SetEnabled(value);
             quitButton.SetEnabled(value);
             foreach (var button in slotButtons)
             {

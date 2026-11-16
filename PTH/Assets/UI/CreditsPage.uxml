@@ -1,0 +1,62 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="Main.uss" />
+    <ui:VisualElement name="credits-root" class="screen credits-screen">
+        <ui:VisualElement name="credits-viewport" class="credits-viewport">
+            <ui:VisualElement name="credits-content" class="credits-content">
+                <ui:Label text="UNKNOWN TECHNOLOGY" class="credits-game-title" />
+                <ui:VisualElement class="credits-block">
+                    <ui:Label text="producer" class="credits-role" />
+                    <ui:Label text="David Hayman" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="credits-block">
+                    <ui:Label text="creative director" class="credits-role" />
+                    <ui:Label text="Abigail George" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="credits-block">
+                    <ui:Label text="programmer" class="credits-role" />
+                    <ui:Label text="Zhanci Peng" class="credits-name" />
+                    <ui:Label text="David Hayman" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="credits-block">
+                    <ui:Label text="game designer" class="credits-role" />
+                    <ui:Label text="Payton Saunders" class="credits-name" />
+                    <ui:Label text="Valerie Tutureski" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="credits-block">
+                    <ui:Label text="3d modeller" class="credits-role" />
+                    <ui:Label text="Valerie Tutureski" class="credits-name" />
+                    <ui:Label text="Abigail George" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="credits-block">
+                    <ui:Label text="narrative designer" class="credits-role" />
+                    <ui:Label text="Iniko Lyakurwa" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="credits-block">
+                    <ui:Label text="researcher" class="credits-role" />
+                    <ui:Label text="David Hayman" class="credits-name" />
+                    <ui:Label text="Iniko Lyakurwa" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="credits-block">
+                    <ui:Label text="playtesters" class="credits-role" />
+                    <ui:Label text="Abigail George" class="credits-name" />
+                    <ui:Label text="Payton Saunders" class="credits-name" />
+                    <ui:Label text="Valerie Tutureski" class="credits-name" />
+                    <ui:Label text="David Hayman" class="credits-name" />
+                    <ui:Label text="Zhanci Peng" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement class="credits-block credits-sponsor-block">
+                    <ui:Label text="sponsor" class="credits-role" />
+                    <ui:Label text="Abbie Hartman" class="credits-name" />
+                </ui:VisualElement>
+                <ui:Label text="Thank you for playing" class="credits-end-note" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="credits-footer" class="credits-footer">
+            <ui:Label name="credits-hint" text="Hold Space / Click: Fast Forward   |   Esc: Close" picking-mode="Ignore" class="credits-hint" />
+            <ui:VisualElement class="credits-footer-buttons">
+                <ui:Button name="credits-speed-button" text="1x" class="menu-button credits-action-button" />
+                <ui:Button name="credits-close-button" text="Close" class="menu-button credits-action-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
