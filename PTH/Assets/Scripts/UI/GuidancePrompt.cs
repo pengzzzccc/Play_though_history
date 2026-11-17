@@ -21,9 +21,15 @@ namespace UnknownTechnology
         public void Draw(string statusText = null)
         {
             if (Remaining <= 0f && statusText == null) return;
-            style ??= new GUIStyle(GUI.skin.box) { alignment = TextAnchor.MiddleCenter, fontSize = 22 };
+            style ??= new GUIStyle(GUI.skin.box)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 22,
+                fontStyle = FontStyle.Bold,
+                wordWrap = true
+            };
             var width = Mathf.Min(600, Screen.width - 32);
-            GUI.Box(new Rect((Screen.width - width) / 2, Screen.height * 0.12f, width, 48),
+            GUI.Box(new Rect((Screen.width - width) / 2, 24, width, 52),
                 statusText ?? text, style);
         }
     }

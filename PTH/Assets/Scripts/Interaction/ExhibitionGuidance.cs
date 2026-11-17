@@ -14,15 +14,31 @@ namespace UnknownTechnology
         private readonly GuidancePrompt guidance = new GuidancePrompt();
 
         private bool CanShowGuidance => enteredRoom && puzzle != null &&
-            Game.Phase == GamePhase.Exploring && !CanvasQuizUI.IsQuizOpen && !puzzle.IsCheckingAnswers;
+            Game.Phase == GamePhase.Exploring && !SceneTransition.IsTransitioning &&
+            !CanvasQuizUI.IsQuizOpen && !puzzle.IsCheckingAnswers;
 
         private void OnEnable()
         {
+            // An already-open scene can still contain the old, unassigned references.
+            // Include inactive objects because the quiz starts hidden.
+            if (puzzle == null)
+                puzzle = FindInScene<PapyrusWallPuzzle>();
+            if (quizUI == null)
+                quizUI = FindInScene<CanvasQuizUI>();
+
             if (quizUI != null)
             {
                 quizUI.Opened += JimmyInteracted;
                 quizUI.IntroductionFinished += IntroductionFinished;
             }
+        }
+
+        private T FindInScene<T>() where T : Component
+        {
+            foreach (var candidate in FindObjectsByType<T>(FindObjectsInactive.Include))
+                if (candidate.gameObject.scene == gameObject.scene)
+                    return candidate;
+            return null;
         }
 
         private void OnDisable()
@@ -55,7 +71,7 @@ namespace UnknownTechnology
             initialInteractionComplete = true;
             guidance.Clear();
             if (puzzle != null && !puzzle.IsUnlocked && !puzzle.IsStarted && !puzzle.IsComplete)
-                guidance.Show("Examine papyrus");
+                guidance.Show("Interact with Artefact");
         }
 
         private void Update()

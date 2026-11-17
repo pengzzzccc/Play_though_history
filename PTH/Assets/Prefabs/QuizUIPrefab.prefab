@@ -1050,13 +1050,6 @@ MonoBehaviour:
     - They used one big leaf from the plant
     - They soaked the reed in water and pressed it flat
     correctAnswerIndex: 1
-  - questionText: The answer is C
-    answers:
-    - C
-    - C
-    - C
-    - C
-    correctAnswerIndex: 2
   - questionText: What material did ancient Egyptians make from papyrus reeds?
     answers:
     - Clay Bricks

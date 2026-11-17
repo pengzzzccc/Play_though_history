@@ -359,7 +359,7 @@ namespace UnknownTechnology
             }
             else
                 state.Unlock();
-            guidance.Show("Fix the papyrus");
+            guidance.Show("Turn on TV");
             UpdateChances();
             SetScreenPower(false);
         }
@@ -395,7 +395,7 @@ namespace UnknownTechnology
         public void BeginMinigame()
         {
             if (!CanBegin || !state.TryStart()) return;
-            guidance.Show("Fill every blank, then click Check");
+            guidance.Show("Fix Papyrus");
             SetScreenPower(true);
             RefreshParagraph();
             SetInteraction(true);
